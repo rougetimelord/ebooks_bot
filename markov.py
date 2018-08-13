@@ -6,27 +6,27 @@ class Chain():
     def __init__(self):
         try:
             with open('markov.json', 'r') as f:
-                self.json = json.load(f)
-                self.freq = self.json['freq']
-                self.roots = self.json['roots']
+                self.data = json.load(f)
+                self.freq = self.data['freq']
+                self.roots = self.data['roots']
                 self.status = True
         except IOError:
-            self.json = {}
+            self.data = {}
             self.freq = {}
             self.roots = []
             self.status = False
 
     def dump(self):
-        self.json = {}
-        self.json['freq'] = self.freq
-        self.json['roots'] = self.roots
+        self.data = {}
+        self.data['freq'] = self.freq
+        self.data['roots'] = self.roots
         try:
             with open('markov.json', 'w', newline='') as f:
-                json.dump(self.json, f)
+                json.dump(self.data, f)
         except:
             try:
                 with open('markov.json', 'w+', newline='') as f:
-                    json.dump(self.json, f)
+                    json.dump(self.data, f)
             except IOError as e:
                 print("%s, exiting" % e)
                 exit()
