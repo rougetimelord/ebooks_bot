@@ -55,7 +55,10 @@ class Bot():
 
     def post_tweet(self):
         text = self.chain.generate_text(random.randint(30, 140))
-        self.api.update_status(status=text)
+        try:
+            self.api.update_status(status=text)
+        except tweepy.TweepError as e:
+            print('Failed to post tweet with %s' % e)
 
     def add_tweets(self, tweets):
         for tweet in tweets:
@@ -70,14 +73,17 @@ class Bot():
 
     def get_all_tweets(self):
         all_tweets = []
-        next_tweets = self.api.user_timeline(screen_name=self.base, count=200, include_rts='false')
-        all_tweets.extend(next_tweets)
-        old_id = all_tweets[-1].id - 1
-        while len(next_tweets) > 0:
-            next_tweets = self.api.user_timeline(screen_name=self.base, count=200, include_rts='false',max_id=old_id)
+        try:
+            next_tweets = self.api.user_timeline(screen_name=self.base, count=200, include_rts='false')
             all_tweets.extend(next_tweets)
             old_id = all_tweets[-1].id - 1
-        self.add_tweets(all_tweets)
+            while len(next_tweets) > 0:
+                next_tweets = self.api.user_timeline(screen_name=self.base, count=200, include_rts='false',max_id=old_id)
+                all_tweets.extend(next_tweets)
+                old_id = all_tweets[-1].id - 1
+            self.add_tweets(all_tweets)
+        except tweepy.TweepError as e:
+            print('Getting tweets failed with %s' % e)
 
     def start(self):
         if not self.chain.status:
