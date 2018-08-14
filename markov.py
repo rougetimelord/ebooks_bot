@@ -64,7 +64,10 @@ class Chain():
     def generate_sentence(self):
         res = ''
         seps = ':;.?!,'
-        word = random.choice(self.roots)
+        try:
+            word = random.choice(self.roots)
+        except IndexError as e:
+            print('Chosing a root failed with %s' % e)
         res += word
         run = True
         while run:
