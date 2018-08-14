@@ -67,18 +67,20 @@ class Bot():
                     text = uni_norm(tweet.extended_tweet.full_text)
                 else:
                     text = uni_norm(tweet.full_text)
-                text = re.sub(r'(http)[a-zA-z:\/.]*', '', text)
+                text = re.sub(r'(@[A-Za-z0-9_]{1,15})|(http[A-Za-z0-9:\/.]*)', '', text)
                 self.chain.add_text(text)
                 self.done.append(tweet.id_str)
 
     def get_all_tweets(self):
         all_tweets = []
         try:
-            next_tweets = self.api.user_timeline(screen_name=self.base, count=200, include_rts='false')
+            next_tweets = self.api.user_timeline(screen_name=self.base, count=200,
+                                                include_rts='false')
             all_tweets.extend(next_tweets)
             old_id = all_tweets[-1].id - 1
             while len(next_tweets) > 0:
-                next_tweets = self.api.user_timeline(screen_name=self.base, count=200, include_rts='false',max_id=old_id)
+                next_tweets = self.api.user_timeline(screen_name=self.base, count=200,
+                                                    include_rts='false',max_id=old_id)
                 all_tweets.extend(next_tweets)
                 old_id = all_tweets[-1].id - 1
             self.add_tweets(all_tweets)
