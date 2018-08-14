@@ -1,7 +1,5 @@
 import random, re, json
 
-
-
 class Chain():
     def __init__(self):
         try:
