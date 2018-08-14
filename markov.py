@@ -68,10 +68,15 @@ class Chain():
             word = random.choice(self.roots)
         except IndexError as e:
             print('Chosing a root failed with %s' % e)
+            return ('', '')
         res += word
         run = True
         while run:
-            word = random.choice(self.freq[word])
+            try:
+                word = random.choice(self.freq[word])
+            except IndexError as e:
+                print('Chosing word failed with %s' % e)
+                return ('', '')
             if word in seps:
                 res += word + ' '
                 run = False
