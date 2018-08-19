@@ -62,6 +62,7 @@ class Bot():
         return tweepy.API(auth)
 
     def add_tweets(self, tweets):
+        self.ignore = [r'\.?(@[A-Za-z0-9_]{1,15})', r'(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r'#[a-zA-Z0-9_]*', r'\$[A-Za-z]{1,6}', r'…', r'pic.twitter.com[A-Za-z\/0-9]*',r'"']
         #add tweets from the base account to the markov chain
         for tweet in tweets:
             if not tweet.id_str in self.done and not tweet.retweeted_status:
@@ -69,7 +70,8 @@ class Bot():
                     text = uni_norm(tweet.extended_tweet.full_text)
                 else:
                     text = uni_norm(tweet.full_text)
-                text = re.sub(r'(@[A-Za-z0-9_]{1,15})|(http[A-Za-z0-9:\/.]*)', '', text)
+                for pat in self.ignore:
+                    text = re.sub(pat, '', text)
                 self.chain.add_text(text)
                 self.done.append(tweet.id_str)
         self.dump()

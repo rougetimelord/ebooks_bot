@@ -32,11 +32,13 @@ class Chain():
     def add_sentence(self, text, end):
         array = text.split()
         array.append(end)
+        if array[0] in ':;.?!,':
+            return
         self.roots.append(array[0])
         while len(array) > 1:
             key = array[0]
             value = array[1]
-            if not key == '' and not value == '':
+            if key != '' and value != '':
                 if key in self.freq:
                     self.freq[key].append(value)
                 else:
@@ -50,11 +52,10 @@ class Chain():
         pieces = re.split(seps, text)[:-1]
         while len(pieces) > 1:
             content = pieces[0]
-            if content[0] == ' ':
+            if not len(content) == 0 and content[0] == ' ':
                 content = content[1:]
-            end = pieces[1]
-            print(content, end)
-            self.add_sentence(content, end)
+                end = pieces[1]
+                self.add_sentence(content, end)
             pieces.pop(0)
             pieces.pop(0)
         self.dump()
@@ -72,13 +73,14 @@ class Chain():
         while run:
             try:
                 word = random.choice(self.freq[word])
-            except IndexError as e:
+            except KeyError as e:
                 print('Chosing word failed with %s' % e)
                 return ('', '')
             if word in seps:
                 res += word + ' '
                 run = False
-            else:
+                break
+            elif not word in seps:
                 res += ' ' + word
         return (res, word)
 
@@ -86,22 +88,15 @@ class Chain():
         res = ''
         hard_sep = '.?!'
         old = '.'
-        while len(res) <= length:
+        while True:
             buf = self.generate_sentence()
-            if len(res + buf[0]) + 2 < length:
+            if len(res + buf[0]) < length + 10:
                 if old in hard_sep:
                     res += buf[0][0].upper() + buf[0][1:]
                 else:
                     res += buf[0]
                 old = buf[1]
-            else:
-                if not res[-2] in hard_sep:
-                    end = res[-1]
-                    while not end in hard_sep:
-                        buf = self.generate_sentence()
-                        if len(res + buf[0]) <= length + 10:
-                            end = buf[1] 
-                    res += buf[0]
+            if len(res) < length + 10 and len(res) > length - 10:
                 break
         return res[:-1]
 
