@@ -25,6 +25,7 @@ class Bot():
         self.api = self.connect()
         self.chain = markov.Chain()
         self.lock = threading.Lock()
+        self.ignore = [r'\.?(@[A-Za-z0-9_]{1,15})', r'(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r'#[a-zA-Z0-9_]*', r'\$[A-Za-z]{1,6}', r'…', r'pic.twitter.com[A-Za-z\/0-9]*',r'"',r'(?<= ) {1,}']
 
     def dump(self):
         #dump json data to file, thread safely
@@ -62,7 +63,6 @@ class Bot():
         return tweepy.API(auth)
 
     def add_tweets(self, tweets):
-        self.ignore = [r'\.?(@[A-Za-z0-9_]{1,15})', r'(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r'#[a-zA-Z0-9_]*', r'\$[A-Za-z]{1,6}', r'…', r'pic.twitter.com[A-Za-z\/0-9]*',r'"']
         #add tweets from the base account to the markov chain
         for tweet in tweets:
             if not tweet.id_str in self.done and not tweet.retweeted_status:
@@ -72,6 +72,9 @@ class Bot():
                     text = uni_norm(tweet.full_text)
                 for pat in self.ignore:
                     text = re.sub(pat, '', text)
+                for char in [':', ';', '.', '?', '!', ',']:
+                    pat = re.escape(char) + r'{2,}'
+                    text = re.sub(pat, text)
                 self.chain.add_text(text)
                 self.done.append(tweet.id_str)
         self.dump()
