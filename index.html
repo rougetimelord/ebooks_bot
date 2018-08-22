@@ -58,16 +58,18 @@
             let key_got = new URL(window.location).searchParams.get('oauth_token');
             document.getElementById('key').value = key_got;
             document.body.classList = (key_got) ? 's' : 'f';
+            let i = 0;
             if(!key_got){document.getElementById('verify').innerText="Key was not found"}
             else{
                 let copy = ()=>{
+                    clearTimeout(i);
                     document.getElementById('key').focus();
                     document.getElementById('key').select();
                     document.execCommand("copy")
-                    document.getElementById('key').blur();
+                    window.getSelection().removeAllRanges()
                     let modal = document.getElementById('modal');
                     modal.className = 'active';
-                    setTimeout(() => {
+                    i = setTimeout(() => {
                         modal.className = 'hidden';
                     }, 3E3);
                 }
