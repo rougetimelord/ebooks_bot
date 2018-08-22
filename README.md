@@ -1,8 +1,0 @@
-# ebooks_bot
-
-A python twitter bot to do what horse_ebooks does.
-
-## Requirements
-- tweepy
-    - if using python 3.7+ you will have to replace `async` in tweepy.stream with `async_`
-    - otherwise change `async_` at `bot.py {134}` to `async`
