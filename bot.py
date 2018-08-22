@@ -76,7 +76,7 @@ class Bot():
                     text = re.sub(pat, '', text)
                 for char in [':', ';', '.', '?', '!', ',']:
                     pat = re.escape(char) + r'{2,}'
-                    text = re.sub(pat, text)
+                    text = re.sub(pat, char, text)
                 self.chain.add_text(text)
                 self.done.append(tweet.id_str)
         self.dump()
