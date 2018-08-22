@@ -3,24 +3,91 @@
     <style>
         *{
             margin: 0;
+            font-size: 2.5vh;
+            text-align: center;
+            cursor: pointer;
         }
         body{
-            text-align: center;
+            width: 100vw;
+        }
+        .s{
+            background-color: #8F8;
+        }
+        .f{
+            background-color: #F88;
+            cursor: default;
         }
         #verify{
             margin-top: 45vh;
+            user-select: none;
+        }
+        #key{
+            font-weight: bold;
+            font-size: 3vh;
+            user-select: text;
+            background-color: transparent;
+            border: 0;
+        }
+        #key:focus{
+            outline: none;
+        }
+        #modal{
+            position: absolute;
+            top: 30vh;
+            left: 50vw;
+            width: 10vw;
+            height: 7vh;
+            transform: translate(-50%, -50%); 
+            transition: opacity 1s;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10%;
+        }
+        #modal:first-child{
+            padding-top: 3vh;
+        }
+        .hidden{
+            opacity: 0;
+        }
+        .active{
+            opacity: 1;
         }
     </style>
     <script>
-        var url = new URL(window.location);
-        var key = url.searchParams.get('oauth_token')
-        document.addEventListener('DOMContentLoaded', ()=>{document.getElementById('key').innerText=key})
+        let key = ()=>{
+            let key_got = new URL(window.location).searchParams.get('oauth_token');
+            document.getElementById('key').value = key_got;
+            document.body.classList = (key_got) ? 's' : 'f';
+            if(!key_got){document.getElementById('verify').innerText="Key was not found"}
+            else{
+                let copy = ()=>{
+                    document.getElementById('key').focus();
+                    document.getElementById('key').select();
+                    document.execCommand("copy")
+                    document.getElementById('key').blur();
+                    let modal = document.getElementById('modal');
+                    modal.className = 'active';
+                    setTimeout(() => {
+                        modal.className = 'hidden';
+                    }, 3E3);
+                }
+                document.addEventListener('click', copy)
+            }
+        }
+        document.addEventListener('DOMContentLoaded', key)
     </script>
 </head>
 <body>
-    <div id="verify">
-        Your key is <br>
-        <div id="key">
+    <div id="modal" class="hidden">
+        <div>
+            Copied
         </div>
+    </div>
+    <div id="verify">
+        Your key is:
+        <div>
+            <input type="text" id='key' readonly="readonly">
+        </div>
+        Enter this into main python window, click anywhere to copy
     </div>
 </body>
