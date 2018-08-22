@@ -96,7 +96,7 @@ class Bot():
                 all_tweets.extend(next_tweets)
                 old_id = all_tweets[-1].id - 1
             self.add_tweets(all_tweets)
-            self.last_id = last
+            self.last_id = last + 1
         except tweepy.TweepError as e:
             print('Getting tweets failed with %s' % e)
 
@@ -150,6 +150,7 @@ class Bot():
 
 class StreamList(tweepy.StreamListener):
     def on_status(self, status):
+        BOT.last_id = status.id
         BOT.add_tweets([status])
 
 if __name__ == "__main__":
