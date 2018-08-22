@@ -11,7 +11,11 @@
             margin-top: 45vh;
         }
     </style>
-    <script src="./app.js" type="text/javascript"></script>
+    <script>
+        var url = new URL(window.location);
+        var key = url.searchParams.get('oauth_token')
+        document.addEventListener('DOMContentLoaded', ()=>{document.getElementById('key').innerText=key})
+    </script>
 </head>
 <body>
     <div id="verify">
