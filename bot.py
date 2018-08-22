@@ -15,12 +15,14 @@ class Bot():
                 self.base = self.data['base']
                 self.keys = self.data['keys']
                 self.last_reply = self.data['last_reply']
+                self.last_id = self.data['last_id']
         except IOError:
             self.data = {}
             self.done = []
             self.base = input('What account is your ebook based on? ')
             self.keys = {'con_k': input('Consumer key '), 'con_s': input('Consumer secret ')}
             self.last_reply = 0
+            self.last_id = 0
             self.dump()
         self.api = self.connect()
         self.chain = markov.Chain()
@@ -79,20 +81,22 @@ class Bot():
                 self.done.append(tweet.id_str)
         self.dump()
 
-    def get_all_tweets(self):
+    def get_tweets(self):
         #on first start up get every tweet
         all_tweets = []
         try:
             next_tweets = self.api.user_timeline(screen_name=self.base, count=200,
-                                                include_rts='false')
+                                                include_rts='false', since_id=self.last_id)
             all_tweets.extend(next_tweets)
             old_id = all_tweets[-1].id - 1
+            last = old_id
             while len(next_tweets) > 0:
                 next_tweets = self.api.user_timeline(screen_name=self.base, count=200,
-                                                    include_rts='false',max_id=old_id)
+                                                    include_rts='false',max_id=old_id,since_id=self.last_id)
                 all_tweets.extend(next_tweets)
                 old_id = all_tweets[-1].id - 1
             self.add_tweets(all_tweets)
+            self.last_id = last
         except tweepy.TweepError as e:
             print('Getting tweets failed with %s' % e)
 
@@ -131,8 +135,7 @@ class Bot():
             time.sleep(random.randint(6.0E1, 3.6E3))
 
     def start(self):
-        if not self.chain.status:
-            self.get_all_tweets()
+        self.get_tweets()
         #set up an event listener for base account tweets
         self.listener = StreamList()
         self.stream = tweepy.Stream(self.api.auth, self.listener)
