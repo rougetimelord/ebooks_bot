@@ -82,7 +82,7 @@ class Bot():
         self.dump()
 
     def get_tweets(self):
-        #on first start up get every tweet
+        #get every tweet, since last start up, or get every tweet
         all_tweets = []
         try:
             next_tweets = self.api.user_timeline(screen_name=self.base, count=200,
