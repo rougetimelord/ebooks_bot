@@ -10,6 +10,7 @@ def uni_norm(text):
 
 class Bot():
     def __init__(self):
+        print("Initiating bot")
         self.lock = threading.Lock()
         try:
             with open('data.json', 'r') as f:
@@ -149,7 +150,7 @@ class Bot():
 
     def start(self):
         print("Starting bot")
-        self.get_thread = threading.Thread(target=self.get_tweets)
+        self.get_thread = threading.Thread(target=self.get_tweets, name="Get_Thread")
         self.get_thread.start()
         self.get_thread.join()
         #set up an event listener for base account tweets
