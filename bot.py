@@ -1,3 +1,5 @@
+#bot.py, a manager of interactions with the twitter api
+#Copyright (C) 2018 Blair "rouge" LaCriox
 import markov
 import tweepy
 import json, re, random, time, threading
@@ -43,7 +45,7 @@ class Bot():
 
     def connect(self):
         #connect to twitter api
-        auth = tweepy.OAuthHandler(self.keys['con_k'], self.keys['con_s'])
+        auth = tweepy.OAuthHandler(self.keys['con_k'], self.keys['con_s'], "https://auth.r0uge.org")
         if 'acc_k' in self.keys and 'acc_s' in self.keys:
             auth.set_access_token(self.keys['acc_k'], self.keys['acc_s'])
         else:

@@ -1,3 +1,5 @@
+#markov.py, a markov chain manager
+#Copyright (C) 2018 Blair "rouge" LaCriox
 import random, re, json
 
 class Chain():
