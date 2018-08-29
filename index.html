@@ -55,7 +55,7 @@
     </style>
     <script>
         let key = ()=>{
-            let key_got = new URL(window.location).searchParams.get('oauth_token');
+            let key_got = new URL(window.location).searchParams.get('oauth_verifier');
             document.getElementById('key').value = key_got;
             document.body.classList = (key_got) ? 's' : 'f';
             let i = 0;
