@@ -10,6 +10,7 @@ def uni_norm(text):
 
 class Bot():
     def __init__(self):
+        self.lock = threading.Lock()
         try:
             with open('data.json', 'r') as f:
                 self.data = json.load(f)
@@ -28,13 +29,12 @@ class Bot():
             self.dump()
         self.api = self.connect()
         self.chain = markov.Chain()
-        self.lock = threading.Lock()
         self.ignore = [r'\.?(@[A-Za-z0-9_]{1,15})', r'(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r'#[a-zA-Z0-9_]*', r'\$[A-Za-z]{1,6}', r'…', r'pic.twitter.com[A-Za-z\/0-9]*',r'"',r'(?<= ) {1,}']
 
     def dump(self):
         #dump json data to file, thread safely
         self.lock.acquire()
-        self.data = {'done': self.done, 'base': self.base, 'keys': self.keys, 'last_reply': self.last_reply}
+        self.data = {'done': self.done, 'base': self.base, 'keys': self.keys, 'last_reply': self.last_reply, 'last_id': self.last_id}
         try:
             with open('data.json', 'w') as f:
                 json.dump(self.data, f)
@@ -62,7 +62,8 @@ class Bot():
             except tweepy.TweepError:
                 print('Failed to get access token, exitting')
                 exit()
-            self.keys['acc_k': auth.access_token, 'acc_s': auth.access_token_secret]
+            self.keys['acc_k'] = auth.access_token
+            self.keys['acc_s'] = auth.access_token_secret
             self.dump()
         return tweepy.API(auth)
 
