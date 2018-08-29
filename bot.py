@@ -24,12 +24,12 @@ class Bot():
             self.done = []
             self.base = input('What account is your ebook based on? ')
             self.keys = {'con_k': input('Consumer key '), 'con_s': input('Consumer secret ')}
-            self.last_reply = 0
-            self.last_id = 0
+            self.last_reply = 1
+            self.last_id = 1
             self.dump()
         self.api = self.connect()
         self.chain = markov.Chain()
-        self.ignore = [r'\.?(@[A-Za-z0-9_]{1,15})', r'(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r'#[a-zA-Z0-9_]*', r'\$[A-Za-z]{1,6}', r'…', r'pic.twitter.com[A-Za-z\/0-9]*',r'"',r'(?<= ) {1,}']
+        self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?#[a-zA-Z0-9_]*', r' ?\$[A-Za-z]{1,6}', r' ?…', r' ?pic.twitter.com[A-Za-z\/0-9]*',r' ?" ?',r'(?<= ) {1,}', r'^ ']
 
     def dump(self):
         #dump json data to file, thread safely
@@ -70,17 +70,20 @@ class Bot():
     def add_tweets(self, tweets):
         #add tweets from the base account to the markov chain
         for tweet in tweets:
-            if not tweet.id_str in self.done and not tweet.retweeted_status:
-                if tweet.extended_text:
+            if not tweet.id_str in self.done and not "retweeted_status" in tweet._json:
+                if "extended_text" in tweet._json:
                     text = uni_norm(tweet.extended_tweet.full_text)
                 else:
-                    text = uni_norm(tweet.full_text)
+                    text = uni_norm(tweet.text)
                 for pat in self.ignore:
                     text = re.sub(pat, '', text)
                 for char in [':', ';', '.', '?', '!', ',']:
                     pat = re.escape(char) + r'{2,}'
                     text = re.sub(pat, char, text)
-                self.chain.add_text(text)
+                if not len(text) == 0:
+                    if not text[-1] in [':', ';', '.', '?', '!', ',']:
+                        text += '.'
+                    self.chain.add_text(text)
                 self.done.append(tweet.id_str)
         self.dump()
 
@@ -138,7 +141,9 @@ class Bot():
             time.sleep(random.randint(6.0E1, 3.6E3))
 
     def start(self):
-        self.get_tweets()
+        self.get_thread = threading.Thread(target=self.get_tweets)
+        self.get_thread.start()
+        self.get_thread.join()
         #set up an event listener for base account tweets
         self.listener = StreamList()
         self.stream = tweepy.Stream(self.api.auth, self.listener)

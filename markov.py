@@ -54,8 +54,7 @@ class Chain():
         pieces = re.split(seps, text)[:-1]
         while len(pieces) > 1:
             content = pieces[0]
-            if not len(content) == 0 and content[0] == ' ':
-                content = content[1:]
+            if len(content) != 0 and content[0] != ' ':
                 end = pieces[1]
                 self.add_sentence(content, end)
             pieces.pop(0)
