@@ -37,10 +37,10 @@ class Bot():
         self.data = {'done': self.done, 'base': self.base, 'keys': self.keys, 'last_reply': self.last_reply, 'last_id': self.last_id}
         try:
             with open('data.json', 'w') as f:
-                json.dump(self.data, f)
+                json.dump(self.data, f, indent=4, sort_keys=True)
         except IOError:
             with open('data.json', 'w+') as f:
-                json.dump(self.data, f)
+                json.dump(self.data, f, indent=4, sort_keys=True)
         self.lock.release()
 
     def connect(self):
