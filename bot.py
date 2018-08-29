@@ -32,6 +32,7 @@ class Bot():
         self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?#[a-zA-Z0-9_]*', r' ?\$[A-Za-z]{1,6}', r' ?…', r' ?pic.twitter.com[A-Za-z\/0-9]*',r' ?" ?',r'(?<= ) {1,}', r'^ ']
 
     def dump(self):
+        print("Dumping json from bot")
         #dump json data to file, thread safely
         self.lock.acquire()
         self.data = {'done': self.done, 'base': self.base, 'keys': self.keys, 'last_reply': self.last_reply, 'last_id': self.last_id}
@@ -44,6 +45,7 @@ class Bot():
         self.lock.release()
 
     def connect(self):
+        print("Connecting to Twitter API")
         #connect to twitter api
         auth = tweepy.OAuthHandler(self.keys['con_k'], self.keys['con_s'], "https://auth.r0uge.org")
         if 'acc_k' in self.keys and 'acc_s' in self.keys:
@@ -68,6 +70,7 @@ class Bot():
         return tweepy.API(auth)
 
     def add_tweets(self, tweets):
+        print("Adding tweets")
         #add tweets from the base account to the markov chain
         for tweet in tweets:
             if not tweet.id_str in self.done and not "retweeted_status" in tweet._json:
@@ -88,6 +91,7 @@ class Bot():
         self.dump()
 
     def get_tweets(self):
+        print("Getting tweets")
         #get every tweet, since last start up, or get every tweet
         all_tweets = []
         try:
@@ -107,6 +111,7 @@ class Bot():
             print('Getting tweets failed with %s' % e)
 
     def post_reply(self, orig_id):
+        print("Posting a reply")
         #post a reply to a mention
         text = self.chain.generate_text(random.randint(30, 140))
         try:
@@ -115,6 +120,7 @@ class Bot():
             print('Failed to post reply with %s' % e)
 
     def check_mentions(self):
+        print("Checking mentions")
         #check for the last 20 mentions since the last check, then reply
         mentions = self.api.mentions_timeline(since_id=self.last_reply)
         for tweet in mentions:
@@ -128,6 +134,7 @@ class Bot():
             time.sleep(3.0E2)
 
     def post_tweet(self):
+        print("Posting a tweet")
         #post a generated tweet
         text = self.chain.generate_text(random.randint(30, 140))
         try:
@@ -141,6 +148,7 @@ class Bot():
             time.sleep(random.randint(6.0E1, 3.6E3))
 
     def start(self):
+        print("Starting bot")
         self.get_thread = threading.Thread(target=self.get_tweets)
         self.get_thread.start()
         self.get_thread.join()
