@@ -146,13 +146,13 @@ class Bot():
     def post_wrapper(self):
         while True:
             self.post_tweet()
-            time.sleep(random.randint(6.0E1, 3.6E3))
+            wait = random.randint(3.0E2, 3.6E3)
+            print("Waiting %s minutes until next post" % round(wait/60, 2))
+            time.sleep(wait)
 
     def start(self):
         print("Starting bot")
-        self.get_thread = threading.Thread(target=self.get_tweets, name="Get_Thread")
-        self.get_thread.start()
-        self.get_thread.join()
+        self.get_tweets()
         #set up an event listener for base account tweets
         self.listener = StreamList()
         self.stream = tweepy.Stream(self.api.auth, self.listener)
@@ -160,8 +160,8 @@ class Bot():
         #create threads for posting and mentions
         self.post_thread = threading.Thread(target=self.post_wrapper, name='Post_Thread')
         self.mention_thread = threading.Thread(target=self.mentions_wrapper, name='Mention_Thread')
-        self.post_thread.run()
-        self.mention_thread.run()
+        self.post_thread.start()
+        self.mention_thread.start()
         self.post_thread.join()
         self.mention_thread.join()
 
