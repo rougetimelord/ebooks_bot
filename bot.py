@@ -21,6 +21,7 @@ class Bot():
                 self.keys = self.data['keys']
                 self.last_reply = self.data['last_reply']
                 self.last_id = self.data['last_id']
+                self.uid = self.data['uid']
         except IOError:
             self.data = {}
             self.done = []
@@ -28,16 +29,19 @@ class Bot():
             self.keys = {'con_k': input('Consumer key '), 'con_s': input('Consumer secret ')}
             self.last_reply = 1
             self.last_id = 1
+            self.uid = 0
             self.dump()
         self.api = self.connect()
+        if self.uid == 0:
+            self.uid = self.api.lookup_users(screen_names=[self.base])[0].id
         self.chain = markov.Chain()
-        self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?#[a-zA-Z0-9_]*', r' ?\$[A-Za-z]{1,6}', r' ?…', r' ?pic.twitter.com[A-Za-z\/0-9]*',r' ?" ?',r'(?<= ) {1,}', r'^ ']
+        self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?#[a-zA-Z0-9_]*', r' ?\$[A-Za-z]{1,6}', r' ?…', r' ?pic.twitter.com[A-Za-z\/0-9]*',r' ?" ?',r'(?<= ) {1,}',r'( -(?=[a-zA-Z]))|((?<=[a-zA-Z])- )', r'^ ']
 
     def dump(self):
         print("Dumping json from bot")
         #dump json data to file, thread safely
         self.lock.acquire()
-        self.data = {'done': self.done, 'base': self.base, 'keys': self.keys, 'last_reply': self.last_reply, 'last_id': self.last_id}
+        self.data = {'done': self.done, 'base': self.base, 'keys': self.keys, 'last_reply': self.last_reply, 'last_id': self.last_id, 'uid': self.uid}
         try:
             with open('data.json', 'w') as f:
                 json.dump(self.data, f, indent=4, sort_keys=True)
@@ -157,9 +161,9 @@ class Bot():
         print("Starting bot")
         self.get_tweets()
         #set up an event listener for base account tweets
-        self.listener = StreamList()
+        self.listener = StreamList(self)
         self.stream = tweepy.Stream(self.api.auth, self.listener)
-        self.stream.filter(follow=[self.base], async_=True)
+        self.stream.filter(follow=[str(self.uid)], async_=True)
         #create threads for posting and mentions
         self.post_thread = threading.Thread(target=self.post_wrapper, name='Post_Thread')
         self.mention_thread = threading.Thread(target=self.mentions_wrapper, name='Mention_Thread')
@@ -169,9 +173,13 @@ class Bot():
         self.mention_thread.join()
 
 class StreamList(tweepy.StreamListener):
+    def __init__(self, bot):
+        self.bot = bot
+        self.api = bot.api
+
     def on_status(self, status):
-        BOT.last_id = status.id
-        BOT.add_tweets([status])
+        self.bot.last_id = status.id
+        self.bot.add_tweets([status])
 
 if __name__ == "__main__":
     #create bot instance and start it
