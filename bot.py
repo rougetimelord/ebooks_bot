@@ -3,6 +3,7 @@
 import markov
 import tweepy
 import json, re, random, time, threading
+from html import unescape
 
 def uni_norm(text):
     return text.translate({0x2018:0x27, 0x2019:0x27, 0x201C:0x22, 0x201D:0x22,
@@ -76,9 +77,11 @@ class Bot():
         for tweet in tweets:
             if not tweet.id_str in self.done and not "retweeted_status" in tweet._json:
                 if "extended_text" in tweet._json:
+                    text = unescape(tweet.extended_tweet.full_text)
                     text = uni_norm(tweet.extended_tweet.full_text)
                 else:
-                    text = uni_norm(tweet.text)
+                    text = unescape(tweet.text)
+                    text = uni_norm(text)
                 for pat in self.ignore:
                     text = re.sub(pat, '', text)
                 for char in [':', ';', '.', '?', '!', ',']:
