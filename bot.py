@@ -35,12 +35,14 @@ class Bot():
         if self.uid == 0:
             self.uid = self.api.lookup_users(screen_names=[self.base])[0].id
         self.chain = markov.Chain()
-        self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?#[a-zA-Z0-9_]*', r' ?\$[A-Za-z]{1,6}', r' ?…', r' ?pic.twitter.com[A-Za-z\/0-9]*',r' ?" ?',r'(?<= ) {1,}',r'( -(?=[a-zA-Z]))|((?<=[a-zA-Z])- )', r'^ ']
+        self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?#[a-zA-Z0-9_]*', r' ?\$[A-Za-z]{1,6}',r' ?" ?',r'(?<= ) {1,}',r'( -(?=[a-zA-Z]))|((?<=[a-zA-Z])- )', r'^ ']
 
     def dump(self):
         print("Dumping json from bot")
         #dump json data to file, thread safely
         self.lock.acquire()
+        if len(self.done) > 200:
+            self.done = self.done[-200:]
         self.data = {'done': self.done, 'base': self.base, 'keys': self.keys, 'last_reply': self.last_reply, 'last_id': self.last_id, 'uid': self.uid}
         try:
             with open('data.json', 'w') as f:
