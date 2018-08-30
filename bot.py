@@ -105,6 +105,8 @@ class Bot():
         try:
             next_tweets = self.api.user_timeline(screen_name=self.base, count=200,
                                                 include_rts='false', since_id=self.last_id)
+            if len(next_tweets) == 0:
+                return
             all_tweets.extend(next_tweets)
             old_id = all_tweets[-1].id - 1
             last = old_id
