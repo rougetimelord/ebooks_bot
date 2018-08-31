@@ -135,6 +135,10 @@ class Bot():
         print("Checking mentions")
         #check for the last 20 mentions since the last check, then reply
         mentions = self.api.mentions_timeline(since_id=self.last_reply)
+        if len(mentions) != 0:
+            print("Found %s mentions!" % len(mentions))
+        else:
+            print("No mentions uwu")
         for tweet in mentions:
             self.last_reply = tweet.id
             self.post_reply(tweet.id)
