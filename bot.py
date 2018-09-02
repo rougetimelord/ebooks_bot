@@ -22,6 +22,7 @@ class Bot():
                 self.last_reply = self.data['last_reply']
                 self.last_id = self.data['last_id']
                 self.uid = self.data['uid']
+                self.wait = self.data['wait']
         except IOError:
             self.data = {}
             self.done = []
@@ -30,6 +31,7 @@ class Bot():
             self.last_reply = 1
             self.last_id = 1
             self.uid = 0
+            self.wait = 0
             self.dump()
         self.api = self.connect()
         if self.uid == 0:
@@ -43,7 +45,7 @@ class Bot():
         self.lock.acquire()
         if len(self.done) > 200:
             self.done = self.done[-200:]
-        self.data = {'done': self.done, 'base': self.base, 'keys': self.keys, 'last_reply': self.last_reply, 'last_id': self.last_id, 'uid': self.uid}
+        self.data = {'done': self.done, 'base': self.base, 'keys': self.keys, 'last_reply': self.last_reply, 'last_id': self.last_id, 'uid': self.uid, 'wait': self.wait}
         try:
             with open('data.json', 'w') as f:
                 json.dump(self.data, f, indent=4, sort_keys=True)
@@ -51,6 +53,7 @@ class Bot():
             with open('data.json', 'w+') as f:
                 json.dump(self.data, f, indent=4, sort_keys=True)
         self.lock.release()
+        return
 
     def connect(self):
         print("Connecting to Twitter API")
@@ -149,6 +152,20 @@ class Bot():
             self.dump()
             time.sleep(3.0E2)
 
+    def sleep_wrapper(self):
+        time_wait = self.wait
+        for i in range(time_wait):
+            try:
+                time.sleep(1)
+                self.wait -= 1
+                if self.wait % 60 == 0:
+                    self.dump()
+            except KeyboardInterrupt:
+                self.dump()
+                exit()
+        return
+
+
     def post_tweet(self):
         print("Posting a tweet")
         #post a generated tweet
@@ -161,9 +178,9 @@ class Bot():
     def post_wrapper(self):
         while True:
             self.post_tweet()
-            wait = random.randint(3.0E2, 3.6E3)
-            print("Waiting %s minutes until next post" % round(wait/60, 2))
-            time.sleep(wait)
+            self.wait = random.randint(3.0E2, 3.6E3)
+            print("Waiting %s minutes until next post" % round(self.wait/60, 2))
+            self.sleep_wrapper()
 
     def start(self):
         print("Starting bot")
