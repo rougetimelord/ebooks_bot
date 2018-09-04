@@ -91,7 +91,7 @@ class Chain():
         old = '.'
         while True:
             buf = self.generate_sentence()
-            if len(res + buf[0]) < length + 10:
+            if len(res + buf[0]) < length + 10 and len(buf[0]) != 0:
                 if old in hard_sep:
                     res += buf[0][0].upper() + buf[0][1:]
                 else:
