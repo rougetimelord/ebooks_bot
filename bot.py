@@ -176,6 +176,8 @@ class Bot():
             print('Failed to post tweet with %s' % e)
 
     def post_wrapper(self):
+        if not self.wait == 0:
+            self.sleep_wrapper()
         while True:
             self.post_tweet()
             self.wait = random.randint(3.0E2, 3.6E3)
