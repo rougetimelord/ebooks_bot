@@ -182,6 +182,8 @@ class Bot():
 
     def start(self):
         print("Starting bot")
+        if not self.wait == 0:
+            print('Waiting for %s minutes before tweeting uwu' % round(self.wait / 60, 2))
         self.get_tweets()
         #set up an event listener for base account tweets
         self.listener = StreamList(self)
