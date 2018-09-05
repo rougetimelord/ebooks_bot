@@ -155,14 +155,10 @@ class Bot():
     def sleep_wrapper(self):
         time_wait = self.wait
         for i in range(time_wait):
-            try:
-                time.sleep(1)
-                self.wait -= 1
-                if self.wait % 60 == 0:
-                    self.dump()
-            except KeyboardInterrupt:
+            time.sleep(1)
+            self.wait -= 1
+            if self.wait % 60 == 0:
                 self.dump()
-                exit()
         return
 
 
@@ -196,8 +192,6 @@ class Bot():
         self.mention_thread = threading.Thread(target=self.mentions_wrapper, name='Mention_Thread')
         self.post_thread.start()
         self.mention_thread.start()
-        self.post_thread.join()
-        self.mention_thread.join()
 
 class StreamList(tweepy.StreamListener):
     def __init__(self, bot):
