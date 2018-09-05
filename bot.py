@@ -11,7 +11,7 @@ def uni_norm(text):
 
 class Bot():
     def __init__(self):
-        print("Initiating bot")
+        print("Initiating bot uwu")
         self.lock = threading.Lock()
         try:
             with open('data.json', 'r') as f:
@@ -40,7 +40,7 @@ class Bot():
         self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?#[a-zA-Z0-9_]*', r' ?\$[A-Za-z]{1,6}',r' ?" ?',r'(?<= ) {1,}',r'( -(?=[a-zA-Z]))|((?<=[a-zA-Z])- )', r'^ ']
 
     def dump(self):
-        print("Dumping json from bot")
+        print("Dumping json from bot uwu")
         #dump json data to file, thread safely
         self.lock.acquire()
         if len(self.done) > 200:
@@ -67,13 +67,13 @@ class Bot():
                 url = auth.get_authorization_url()
                 print('Go to %s' % url)
             except tweepy.TweepError:
-                print('Failed to get request token, exitting')
+                print('Failed to get request token, exitting OWO')
                 exit()
             verifier = input('Verifier: ')
             try:
                 auth.get_access_token(verifier)
             except tweepy.TweepError:
-                print('Failed to get access token, exitting')
+                print('Failed to get access token, exitting OWO')
                 exit()
             self.keys['acc_k'] = auth.access_token
             self.keys['acc_s'] = auth.access_token_secret
@@ -104,7 +104,7 @@ class Bot():
         self.dump()
 
     def get_tweets(self):
-        print("Getting tweets")
+        print("Getting tweets nwn")
         #get every tweet, since last start up, or get every tweet
         all_tweets = []
         try:
@@ -123,16 +123,16 @@ class Bot():
             self.add_tweets(all_tweets)
             self.last_id = last + 1
         except tweepy.TweepError as e:
-            print('Getting tweets failed with %s' % e)
+            print('Getting tweets failed with %s OWO' % e)
 
     def post_reply(self, orig_id):
-        print("Posting a reply")
+        print("Posting a reply uwu")
         #post a reply to a mention
         text = self.chain.generate_text(random.randint(30, 140))
         try:
             self.api.update_status(status=text, in_reply_to_status_id=orig_id, auto_populate_reply_metadata=True)
         except tweepy.TweepError as e:
-            print('Failed to post reply with %s' % e)
+            print('Failed to post reply with %s OWO' % e)
 
     def check_mentions(self):
         print("Checking mentions")
@@ -173,7 +173,7 @@ class Bot():
         try:
             self.api.update_status(status=text)
         except tweepy.TweepError as e:
-            print('Failed to post tweet with %s' % e)
+            print('Failed to post tweet with %s OWO' % e)
 
     def post_wrapper(self):
         if not self.wait == 0:
