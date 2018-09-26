@@ -4,6 +4,8 @@ import markov
 import tweepy
 import json, re, random, time, threading
 from html import unescape
+import urllib.error as URL_Error
+import urllib.request as request
 
 def uni_norm(text):
     return text.translate({0x2018:0x27, 0x2019:0x27, 0x201C:0x22, 0x201D:0x22,
@@ -80,6 +82,17 @@ class Bot():
             self.dump()
         return tweepy.API(auth)
 
+    def ping():
+        try:
+            req = request.Request(url="http://1.1.1.1",method="HEAD")
+            with request.urlopen(req) as res:
+                if res.status == 200:
+                    return True
+                else:
+                    return False
+        except URL_Error as e:
+            return False
+
     def add_tweets(self, tweets):
         print("Adding tweets")
         #add tweets from the base account to the markov chain
@@ -133,6 +146,12 @@ class Bot():
             self.api.update_status(status=text, in_reply_to_status_id=orig_id, auto_populate_reply_metadata=True)
         except tweepy.TweepError as e:
             print('Failed to post reply with %s OWO' % e)
+        except URL_Error.URLError as f:
+            print("%s happened owo" % f)
+            a = False
+            while a == False:
+                a = self.ping()
+                time.sleep(60)
 
     def check_mentions(self):
         print("Checking mentions")
@@ -170,6 +189,13 @@ class Bot():
             self.api.update_status(status=text)
         except tweepy.TweepError as e:
             print('Failed to post tweet with %s OWO' % e)
+        except URL_Error.URLError as f:
+            print("%s happened owo" % f)
+            a = False
+            while a == False:
+                a = self.ping()
+                time.sleep(60)
+
 
     def post_wrapper(self):
         if not self.wait == 0:
@@ -180,15 +206,19 @@ class Bot():
             print("Waiting %s minutes until next post" % round(self.wait/60, 2))
             self.sleep_wrapper()
 
+    def start_stream(self, wait=0):
+        time.sleep(wait)
+        #set up an event listener for base account tweets
+        self.listener = StreamList(self)
+        self.stream = tweepy.Stream(self.api.auth, self.listener)
+        self.stream.filter(follow=[str(self.uid)], async_=True)
+
     def start(self):
         print("Starting bot")
         if not self.wait == 0:
             print('Waiting for %s minutes before tweeting uwu' % round(self.wait / 60, 2))
         self.get_tweets()
-        #set up an event listener for base account tweets
-        self.listener = StreamList(self)
-        self.stream = tweepy.Stream(self.api.auth, self.listener)
-        self.stream.filter(follow=[str(self.uid)], async_=True)
+        self.start_stream()
         #create threads for posting and mentions
         self.post_thread = threading.Thread(target=self.post_wrapper, name='Post_Thread')
         self.mention_thread = threading.Thread(target=self.mentions_wrapper, name='Mention_Thread')
@@ -203,6 +233,19 @@ class StreamList(tweepy.StreamListener):
     def on_status(self, status):
         self.bot.last_id = status.id
         self.bot.add_tweets([status])
+
+    def on_connect(self):
+        print("Stream connected uwu")
+
+    def on_error(self, status_code)
+        if status_code == 420:
+            print("I need to chill TwT")
+            Bot.start_stream(60)
+        else:
+            print(status_code)
+            Bot.start_stream()
+        return False
+
 
 if __name__ == "__main__":
     #create bot instance and start it
