@@ -237,7 +237,7 @@ class StreamList(tweepy.StreamListener):
     def on_connect(self):
         print("Stream connected uwu")
 
-    def on_error(self, status_code)
+    def on_error(self, status_code):
         if status_code == 420:
             print("I need to chill TwT")
             Bot.start_stream(60)
