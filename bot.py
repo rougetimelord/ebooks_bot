@@ -41,8 +41,9 @@ class Bot():
         self.chain = markov.Chain()
         self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?#[a-zA-Z0-9_]*', r' ?\$[A-Za-z]{1,6}',r' ?" ?',r'(?<= ) {1,}',r'( -(?=[a-zA-Z]))|((?<=[a-zA-Z])- )', r'^ ']
 
-    def dump(self):
-        print("Dumping json from bot uwu")
+    def dump(self, silent=False):
+        if not silent:
+            print("Dumping json from bot uwu")
         #dump json data to file, thread safely
         self.lock.acquire()
         if len(self.done) > 200:
@@ -177,7 +178,7 @@ class Bot():
             time.sleep(1)
             self.wait -= 1
             if self.wait % 60 == 0:
-                self.dump()
+                self.dump(silent=True)
         return
 
 
