@@ -95,7 +95,7 @@ class Bot():
             return False
 
     def add_tweets(self, tweets):
-        print("Adding tweets")
+        print("Adding %s tweet(s)" % len(tweets))
         #add tweets from the base account to the markov chain
         for tweet in tweets:
             if not tweet.id_str in self.done and not "retweeted_status" in tweet._json:
