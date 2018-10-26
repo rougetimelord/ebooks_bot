@@ -65,7 +65,7 @@ class Bot():
         try:
             with open('data.json', 'w') as f:
                 json.dump(self.data, f, indent=4, sort_keys=True)
-        except IOErre time im or:
+        except IOError:
             with open('data.json', 'w+') as f:
                 json.dump(self.data, f, indent=4, sort_keys=True)
         self.lock.release()
