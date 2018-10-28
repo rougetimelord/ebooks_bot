@@ -44,7 +44,7 @@ class Bot():
         self.chain = markov.Chain()
         #This really long regex array filters out tags, websites, tickers,
         #weird quotes, long white space, and beginning spaces.
-        self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?\$[A-Za-z]{1,6}',r'(?<=\s)"\s',r'(?<= ) {1,}', r'^ ']
+        self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?\$[A-Za-z]{1,6}',r'(?<=\s)"\s',r'(?<= ) {1,}', r'^ ', r'"']
 
     """Dumps json data to file, thread safely.
 
