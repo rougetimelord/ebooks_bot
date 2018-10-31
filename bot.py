@@ -18,6 +18,7 @@ class Bot():
     def __init__(self):
         print("Initiating bot uwu")
         self.lock = threading.Lock()
+        self.json_lock = threading.Lock()
         try:
             with open('data.json', 'r') as f:
                 self.data = json.load(f)
@@ -124,6 +125,7 @@ class Bot():
 
     def add_tweets(self, tweets):
         print("Adding %s tweet(s)" % len(tweets))
+        self.json_lock.accquire()
         #add tweets from the base account to the markov chain
         for tweet in tweets:
             if not tweet.id_str in self.done and not "retweeted_status" in tweet._json:
@@ -146,6 +148,7 @@ class Bot():
                         text += '.'
                     self.chain.add_text(text)
                 self.done.append(tweet.id_str)
+        self.json_lock.release()
         self.dump()
         return
 
@@ -221,6 +224,7 @@ class Bot():
             self.check_mentions()
             self.dump()
             time.sleep(3.0E2)
+        return
 
     """Wraps sleeping in a method that prints the JSON every minute.
     """
@@ -239,6 +243,7 @@ class Bot():
 
     def post_tweet(self):
         print("Posting a tweet")
+        self.json_lock.accquire()
         #post a generated tweet
         text = self.chain.generate_text(random.randint(30, 140))
         try:
@@ -251,6 +256,8 @@ class Bot():
             while a == False:
                 a = self.ping()
                 time.sleep(60)
+        self.json_lock.release()
+        return
 
     """Wraps tweet posting so that it can be on it's own thread.
     """
@@ -263,6 +270,7 @@ class Bot():
             self.wait = random.randint(3.0E2, 3.6E3)
             print("Waiting %s minutes until next post" % round(self.wait/60, 2))
             self.sleep_wrapper()
+        return
 
     """Starts the stream listener.
     """
@@ -273,6 +281,7 @@ class Bot():
         self.listener = StreamList(self)
         self.stream = tweepy.Stream(self.api.auth, self.listener)
         self.stream.filter(follow=[str(self.uid)], async_=True)
+        return
 
     """Really starts up the bot.
     """
@@ -288,6 +297,7 @@ class Bot():
         self.mention_thread = threading.Thread(target=self.mentions_wrapper, name='Mention_Thread')
         self.post_thread.start()
         self.mention_thread.start()
+        return
 
 """Manages the stream listener.
 """
