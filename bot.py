@@ -125,7 +125,7 @@ class Bot():
 
     def add_tweets(self, tweets):
         print("Adding %s tweet(s)" % len(tweets))
-        self.json_lock.accquire()
+        self.json_lock.acquire()
         #add tweets from the base account to the markov chain
         for tweet in tweets:
             if not tweet.id_str in self.done and not "retweeted_status" in tweet._json:
@@ -243,7 +243,7 @@ class Bot():
 
     def post_tweet(self):
         print("Posting a tweet")
-        self.json_lock.accquire()
+        self.json_lock.acquire()
         #post a generated tweet
         text = self.chain.generate_text(random.randint(30, 140))
         try:
