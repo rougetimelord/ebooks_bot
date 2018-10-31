@@ -74,7 +74,7 @@ class Bot():
     """Connects the bot to the twitter api.
     
     Returns:
-        tweepy.API -- An instance of a twitter API connection.
+        tweepy.API: An instance of a twitter API connection.
     """
 
     def connect(self):
@@ -136,7 +136,10 @@ class Bot():
                 for pat in self.ignore:
                     text = re.sub(pat, '', text)
                 for char in [':', ';', '.', '?', '!', ',', "\n"]:
-                    pat = re.escape(char) + r'{2,}'
+                    if (char == '\n'):
+                        pat = char + r'{2,}'
+                    else:
+                        pat = re.escape(char) + r'{2,}'
                     text = re.sub(pat, char, text)
                 if not len(text) == 0:
                     if not text[-1] in [':', ';', '.', '?', '!', ',', "\n"]:
