@@ -3,12 +3,10 @@
 import random, re, json
 
 class Chain():
-
-    """Reads the JSON or starts a new one.
-    """
-
     def __init__(self):
-        #Open the json or create a new one
+        """Reads the JSON or starts a new one.
+        """
+
         try:
             with open('markov.json', 'r') as f:
                 self.data = json.load(f)
@@ -21,10 +19,10 @@ class Chain():
             self.roots = []
             self.status = False
 
-    """Dumps dictionary to JSON.
-    """
-
     def dump(self):
+        """Dumps dictionary to JSON.
+        """
+
         self.data = {}
         self.data['freq'] = self.freq
         self.data['roots'] = self.roots
@@ -39,10 +37,14 @@ class Chain():
                 print("%s, exiting" % e)
                 exit()
 
-    """Add a sentence by splitting it into words.
-    """
-
     def add_sentence(self, text, end):
+        """Adds a single sentence to the chain
+        
+        Arguments:
+            text {str} -- The sentence to be added.
+            end {str} -- The end of the sentence.
+        """
+
         array = text.split()
         array.append(end)
         if array[0] in ':;.?!,\n':
@@ -58,10 +60,13 @@ class Chain():
                     self.freq[key] = [value]
             array.pop(0)
 
-    """Adds text by splitting the text into sentences and adding the sentences.
-    """
-
     def add_text(self, text):
+        """Adds text to the markov chain, by splitting it into sentences first.
+        
+        Arguments:
+            text {str} -- The text to add
+        """
+
         seps = '([:;.?!,\n])'
         pieces = re.split(seps, text)[:-1]
         while len(pieces) > 1:
@@ -73,13 +78,13 @@ class Chain():
             pieces.pop(0)
         self.dump()
 
-    """Generates a sentence of text.
-    
-    Returns:
-        Tuple -- A tuple with (String sentence, String ending_punctuation).
-    """
-
     def generate_sentence(self):
+        """Generates a sentence of text.
+    
+        Returns:
+            tuple -- A tuple with (String sentence, String ending_punctuation).
+        """
+
         res = ''
         seps = ':;.?!,\n'
         try:
@@ -104,13 +109,16 @@ class Chain():
                 res += ' ' + word
         return (res, word)
 
-    """Generates a length of text
-    
-    Returns:
-        String message -- The text for the tweet. 
-    """
-
     def generate_text(self, length):
+        """Generates a certain length(ish) amount of text.
+        
+        Arguments:
+            length {int} -- The length to generate.
+        
+        Returns:
+            str -- The text generated.
+        """
+
         res = ''
         hard_sep = '.?!\n'
         old = '.'
