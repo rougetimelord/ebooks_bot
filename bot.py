@@ -12,10 +12,10 @@ def uni_norm(text):
                           0xa0:0x20})
 
 class Bot():
-    """Inisiate bot by loading JSON, setting a lock and connecting to the API.
-    """
-
     def __init__(self):
+        """Initiate bot by loading JSON, setting a lock and connecting to the API.
+        """
+
         print("Initiating bot uwu")
         self.lock = threading.Lock()
         self.json_lock = threading.Lock()
@@ -47,14 +47,14 @@ class Bot():
         #weird quotes, long white space, and beginning spaces.
         self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?\$[A-Za-z]{1,6}',r'(?<=\s)"\s',r'(?<= ) {1,}', r'^ ', r'"']
 
-    """Dumps json data to file, thread safely.
-
-    Arguments:
-        silent: Determines whether there will output.
-
-    """
-
     def dump(self, silent=False):
+         """Dumps json data to file, thread safely.
+
+        Arguments:
+            silent {Boolean} -- Determines whether there will output.
+
+        """
+
         if not silent:
             print("Dumping json from bot uwu")
         self.lock.acquire()
@@ -72,13 +72,13 @@ class Bot():
         self.lock.release()
         return
 
-    """Connects the bot to the twitter api.
-    
-    Returns:
-        tweepy.API: An instance of a twitter API connection.
-    """
-
     def connect(self):
+        """Connects the bot to the twitter api.
+    
+        Returns:
+            tweepy.API -- An instance of a twitter API connection.
+        """
+
         print("Connecting to Twitter API")
         #connect to twitter api
         auth = tweepy.OAuthHandler(self.keys['con_k'], self.keys['con_s'], "https://auth.r0uge.org")
@@ -103,14 +103,15 @@ class Bot():
             self.dump()
         return tweepy.API(auth)
 
-    """Pings a DNS to check if the device is online.
-
-    Returns:
-        Boolean -- Whether the device is connected to the internet.
-    """
-
     def ping():
+        """Pings a DNS to check if the device is online.
+
+        Returns:
+            Boolean -- Whether the device is connected to the internet.
+        """
+
         try:
+            print("Pinging 1.1.1.1 uwu")
             req = request.Request(url="http://1.1.1.1",method="HEAD")
             with request.urlopen(req) as res:
                 if res.status == 200:
@@ -120,10 +121,13 @@ class Bot():
         except URL_Error as e:
             return False
 
-    """Adds new tweets to the Markov chain.
-    """
-
     def add_tweets(self, tweets):
+        """Adds new tweets to the Markov chain.
+
+        Arguments:
+            tweets {list} -- A list of tweets gotten.
+        """
+
         print("Adding %s tweet(s)" % len(tweets))
         self.json_lock.acquire()
         #add tweets from the base account to the markov chain
@@ -152,10 +156,10 @@ class Bot():
         self.dump()
         return
 
-    """ Gets all of the base account's tweets.
-    """
-
     def get_tweets(self):
+        """ Gets all of the base account's tweets.
+        """
+
         print("Getting tweets nwn")
         #get every tweet, since last start up, or get every tweet
         all_tweets = []
@@ -178,13 +182,13 @@ class Bot():
             print('Getting tweets failed with %s OWO' % e)
         return
 
-    """Posts a reply if needed
-
-    Args:
-        orig_id: A string that is the tweet id of the tweet to reply to.
-    """
-
     def post_reply(self, orig_id):
+        """Posts a reply if needed
+
+        Arguments:
+            orig_id {str} -- A string that is the tweet id of the tweet to \
+                    reply to.
+        """
         print("Posting a reply uwu")
         #post a reply to a mention
         text = self.chain.generate_text(random.randint(30, 140))
@@ -200,10 +204,10 @@ class Bot():
                 time.sleep(60)
         return
 
-    """Check if The bot has been mentioned and reply.
-    """
-
     def check_mentions(self):
+        """Check if The bot has been mentioned and reply.
+        """
+
         print("Checking mentions")
         #check for the last 20 mentions since the last check, then reply
         mentions = self.api.mentions_timeline(since_id=self.last_reply)
@@ -216,20 +220,20 @@ class Bot():
             self.post_reply(tweet.id)
         return
 
-    """Wraps the mention checker so it can be in it's own thread.
-    """
-
     def mentions_wrapper(self):
+        """Wraps the mention checker so it can be in it's own thread.
+        """
+
         while True:
             self.check_mentions()
             self.dump()
             time.sleep(3.0E2)
         return
 
-    """Wraps sleeping in a method that prints the JSON every minute.
-    """
-
     def sleep_wrapper(self):
+        """Wraps sleeping in a method that prints the JSON every minute.
+        """
+
         time_wait = self.wait
         for i in range(time_wait):
             time.sleep(1)
@@ -238,10 +242,10 @@ class Bot():
                 self.dump(silent=True)
         return
 
-    """Post a markov chain generated tweet.
-    """
-
     def post_tweet(self):
+        """Post a markov chain generated tweet.
+        """
+
         print("Posting a tweet")
         self.json_lock.acquire()
         #post a generated tweet
@@ -259,10 +263,10 @@ class Bot():
         self.json_lock.release()
         return
 
-    """Wraps tweet posting so that it can be on it's own thread.
-    """
-
     def post_wrapper(self):
+        """Wraps tweet posting so that it can be on it's own thread.
+        """
+
         if not self.wait == 0:
             self.sleep_wrapper()
         while True:
@@ -272,10 +276,14 @@ class Bot():
             self.sleep_wrapper()
         return
 
-    """Starts the stream listener.
-    """
-
     def start_stream(self, wait=0):
+        """Starts the stream listener
+        
+        Keyword Arguments:
+            wait {int} -- How long to wait before starting. (default: {0})
+        """
+
+
         time.sleep(wait)
         #set up an event listener for base account tweets
         self.listener = StreamList(self)
@@ -283,10 +291,10 @@ class Bot():
         self.stream.filter(follow=[str(self.uid)], async_=True)
         return
 
-    """Really starts up the bot.
-    """
-
     def start(self):
+        """Really starts up the bot.
+        """
+
         print("Starting bot")
         if not self.wait == 0:
             print('Waiting for %s minutes before tweeting uwu' % round(self.wait / 60, 2))
@@ -299,22 +307,40 @@ class Bot():
         self.mention_thread.start()
         return
 
-"""Manages the stream listener.
-"""
-
 class StreamList(tweepy.StreamListener):
+    """Manages the stream listener.
+    """
+
     def __init__(self, bot):
         self.bot = bot
         self.api = bot.api
 
     def on_status(self, status):
+        """Reacts to new tweets and sends them off to the markov chain.
+        
+        Arguments:
+            status {tweepy.Status} -- The tweet.
+        """
+
         self.bot.last_id = status.id
         self.bot.add_tweets([status])
 
     def on_connect(self):
+        """Alerts the user that the stream has been connected.
+        """
+
         print("Stream connected uwu")
 
     def on_error(self, status_code):
+        """Reacts to errors.
+        
+        Arguments:
+            status_code {int} -- The error status code.
+        
+        Returns:
+            Boolean -- Always false to close the listener.
+        """
+
         if status_code == 420:
             print("I need to chill TwT")
             self.bot.start_stream(60)
