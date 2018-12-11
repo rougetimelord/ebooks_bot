@@ -215,8 +215,9 @@ class Bot():
         else:
             print("No mentions uwu")
         for tweet in mentions:
-            self.last_reply = tweet.id
-            self.post_reply(tweet.id)
+            if self.last_id < tweet.id:
+                self.last_reply = tweet.id
+                self.post_reply(tweet.id)
         return
 
     def mentions_wrapper(self):
