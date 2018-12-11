@@ -48,13 +48,11 @@ class Bot():
         self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?\$[A-Za-z]{1,6}',r'(?<=\s)"\s',r'(?<= ) {1,}', r'^ ', r'"']
 
     def dump(self, silent=False):
-         """Dumps json data to file, thread safely.
-
+        """Dumps json data to file, thread safely.
         Arguments:
             silent {Boolean} -- Determines whether there will output.
-
         """
-
+        
         if not silent:
             print("Dumping json from bot uwu")
         self.lock.acquire()
@@ -103,7 +101,7 @@ class Bot():
             self.dump()
         return tweepy.API(auth)
 
-    def ping():
+    def ping(self):
         """Pings a DNS to check if the device is online.
 
         Returns:
