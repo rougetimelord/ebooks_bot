@@ -174,8 +174,9 @@ class Bot():
                                                     include_rts='false',max_id=old_id,since_id=self.last_id)
                 all_tweets.extend(next_tweets)
                 old_id = all_tweets[-1].id - 1
-            self.add_tweets(all_tweets)
             self.last_id = last + 1
+            self.dump(silent=True)
+            self.add_tweets(all_tweets)
         except tweepy.TweepError as e:
             print('Getting tweets failed with %s OWO' % e)
         return
@@ -286,7 +287,7 @@ class Bot():
         #set up an event listener for base account tweets
         self.listener = StreamList(self)
         self.stream = tweepy.Stream(self.api.auth, self.listener)
-        self.stream.filter(follow=[str(self.uid)], async_=True)
+        self.stream.filter(follow=[str(self.uid)], is_async=True)
         return
 
     def start(self):
