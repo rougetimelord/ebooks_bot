@@ -219,7 +219,7 @@ class Bot():
             self.last_id = mentions[-1].id
             return
         for tweet in mentions:
-            if self.last_id < tweet.id:
+            if self.last_id <= tweet.id:
                 self.last_reply = tweet.id
                 self.post_reply(tweet.id)
         return
