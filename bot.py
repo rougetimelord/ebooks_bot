@@ -49,6 +49,7 @@ class Bot():
 
     def dump(self, silent=False):
         """Dumps json data to file, thread safely.
+
         Arguments:
             silent {Boolean} -- Determines whether there will output.
         """
@@ -237,8 +238,8 @@ class Bot():
         """Wraps sleeping in a method that prints the JSON every minute.
         """
 
-        time_wait = self.wait
-        for i in range(time_wait):
+        time_wait = int(self.wait)
+        for _ in range(0, time_wait):
             time.sleep(1)
             self.wait -= 1
             if self.wait % 60 == 0:
@@ -274,7 +275,7 @@ class Bot():
             self.sleep_wrapper()
         while True:
             self.post_tweet()
-            self.wait = random.randint(3.0E2, 3.6E3)
+            self.wait = 7.2E3
             print("Waiting %s minutes until next post" % round(self.wait/60, 2))
             self.sleep_wrapper()
         return
