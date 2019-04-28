@@ -4,7 +4,7 @@ import markov
 import tweepy
 import json, re, random, time, threading
 from html import unescape
-import urllib.error as URL_Error
+from urllib.error import URLError as URL_Error
 import urllib.request as request
 
 def uni_norm(text):
@@ -117,7 +117,7 @@ class Bot():
                     return True
                 else:
                     return False
-        except URL_Error as e:
+        except URL_Error:
             return False
 
     def add_tweets(self, tweets):
@@ -196,7 +196,7 @@ class Bot():
             self.api.update_status(status=text, in_reply_to_status_id=orig_id, auto_populate_reply_metadata=True)
         except tweepy.TweepError as e:
             print('Failed to post reply with %s OWO' % e)
-        except URL_Error.URLError as f:
+        except URL_Error as f:
             print("%s happened owo" % f)
             a = False
             while a == False:
@@ -258,7 +258,7 @@ class Bot():
             self.api.update_status(status=text)
         except tweepy.TweepError as e:
             print('Failed to post tweet with %s OWO' % e)
-        except URL_Error.URLError as f:
+        except URL_Error as f:
             print("%s happened owo" % f)
             a = False
             while a == False:
