@@ -47,7 +47,7 @@ class Chain():
 
         array = text.split()
         array.append(end)
-        if array[0] in ':;.?!,\n':
+        if array[0] in '\03':
             return
         self.roots.append(array[0])
         while len(array) > 1:
@@ -67,7 +67,7 @@ class Chain():
             text {str} -- The text to add
         """
 
-        seps = '([:;.?!,\n])'
+        seps = '([\03])'
         pieces = re.split(seps, text)[:-1]
         while len(pieces) > 1:
             content = pieces[0]
@@ -86,7 +86,8 @@ class Chain():
         """
 
         res = ''
-        seps = ':;.?!,\n'
+        seps = '\03'
+        special = ',.?!'
         try:
             word = random.choice(self.roots)
         except IndexError as e:
@@ -94,6 +95,7 @@ class Chain():
             return ('', '')
         res += word
         run = True
+        length = 1
         while run:
             try:
                 word = random.choice(self.freq[word])
@@ -101,38 +103,38 @@ class Chain():
                 print('Chosing word failed with %s' % e)
                 return ('', '')
             if word in seps:
-                if not word == "\n":
-                    res += word + ' '
-                run = False
-                break
+                if length < 3:
+                    res = word = random.choice(self.roots)
+                    continue
+                else:
+                    run = False
+                    break
             elif not word in seps:
-                res += ' ' + word
-        return (res, word)
+                if word in special:
+                    res += word + ' '
+                else:
+                    res += ' ' + word
+                length += 1
+        return res
 
     def generate_text(self, length):
         """Generates a certain length(ish) amount of text.
-        
+
         Arguments:
-            length {int} -- The length to generate.
+            length {int} -- How many sentences to make
         
         Returns:
             str -- The text generated.
         """
 
         res = ''
-        hard_sep = '.?!\n'
-        old = '.'
-        while True:
-            buf = self.generate_sentence()
-            if len(res + buf[0]) < length + 10 and len(buf[0]) != 0:
-                if old in hard_sep:
-                    res += buf[0][0].upper() + buf[0][1:]
-                else:
-                    res += buf[0]
-                old = buf[1]
-            if len(res) < length + 10 and len(res) > length - 10:
-                break
-        return res[:-1]
+        length = 1
+
+        for _ in range(length):
+            res += self.generate_sentence()
+
+        return res
+        
 
 if __name__ == "__main__":
     print("This won't work")

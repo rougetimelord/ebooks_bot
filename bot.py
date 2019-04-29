@@ -134,21 +134,16 @@ class Bot():
             if not tweet.id_str in self.done and not "retweeted_status" in tweet._json:
                 if "extended_text" in tweet._json:
                     text = unescape(tweet.extended_tweet.full_text)
-                    text = uni_norm(tweet.extended_tweet.full_text)
+                    text = uni_norm(text)
                 else:
                     text = unescape(tweet.text)
                     text = uni_norm(text)
                 for pat in self.ignore:
                     text = re.sub(pat, '', text)
-                for char in [':', ';', '.', '?', '!', ',', "\n"]:
-                    if (char == '\n'):
-                        pat = char + r'{2,}'
-                    else:
-                        pat = re.escape(char) + r'{2,}'
-                    text = re.sub(pat, char, text)
+                pat = "\n" + r'{2,}'
+                text = re.sub(pat, "\n", text)
                 if not len(text) == 0:
-                    if not text[-1] in [':', ';', '.', '?', '!', ',', "\n"]:
-                        text += '.'
+                    text += "\03"
                     self.chain.add_text(text)
                 self.done.append(tweet.id_str)
         self.json_lock.release()
@@ -191,7 +186,7 @@ class Bot():
         """
         print("Posting a reply uwu")
         #post a reply to a mention
-        text = self.chain.generate_text(random.randint(30, 140))
+        text = self.chain.generate_text(random.randint(1, 3))
         try:
             self.api.update_status(status=text, in_reply_to_status_id=orig_id, auto_populate_reply_metadata=True)
         except tweepy.TweepError as e:
@@ -253,7 +248,7 @@ class Bot():
         print("Posting a tweet")
         self.json_lock.acquire()
         #post a generated tweet
-        text = self.chain.generate_text(random.randint(30, 140))
+        text = self.chain.generate_text(random.randint(1, 5))
         try:
             self.api.update_status(status=text)
         except tweepy.TweepError as e:
