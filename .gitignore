@@ -1,4 +1,5 @@
-*.json
+**/data.json
+**/markov.json
 **/__pycache__
 *.txt
 **/tools
