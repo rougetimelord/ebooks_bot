@@ -127,7 +127,7 @@ class Bot():
             tweets {list} -- A list of tweets gotten.
         """
 
-        print("Adding %s tweet(s)" % len(tweets))
+        print("Adding %s tweet(s) nwn" % len(tweets))
         self.json_lock.acquire()
         #add tweets from the base account to the markov chain
         for tweet in tweets:
@@ -210,13 +210,16 @@ class Bot():
             print("Found %s mentions!" % len(mentions))
         else:
             print("No mentions uwu")
+            return
+
+        if self.last_id == 1:
+            self.last_reply = mentions[0].id
+            return
+
+        self.last_reply = mentions[0].id
         for tweet in mentions:
-            if self.last_reply == 1:
-                self.last_reply = mentions[-1].id
-                return
-            else:
-                self.last_reply = tweet.id
-                self.post_reply(tweet.id)
+            self.last_reply = tweet.id
+            self.post_reply(tweet.id)
         return
 
     def mentions_wrapper(self):
