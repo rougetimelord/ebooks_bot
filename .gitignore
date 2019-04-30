@@ -4,3 +4,4 @@
 *.txt
 **/tools
 **/*.env
+**/node_modules

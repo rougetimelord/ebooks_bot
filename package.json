@@ -10,7 +10,12 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "dotenv": "^6.2.0",
+    "login-with-twitter": "^1.2.0",
+    "cookie-session": "^1.3.3",
+    "oauth": "^0.9",
+    "request": "^2.88"
   },
   "engines": {
     "node": "8.x"
