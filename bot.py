@@ -210,11 +210,11 @@ class Bot():
             print("Found %s mentions!" % len(mentions))
         else:
             print("No mentions uwu")
-        if self.last_id == 1:
-            self.last_id = mentions[-1].id
-            return
         for tweet in mentions:
-            if self.last_id <= tweet.id:
+            if self.last_reply == 1:
+                self.last_reply = mentions[-1].id
+                return
+            else:
                 self.last_reply = tweet.id
                 self.post_reply(tweet.id)
         return
