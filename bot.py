@@ -1,6 +1,6 @@
 #bot.py, a manager of interactions with the twitter api
 #Copyright (C) 2018 Blair "rouge" LaCriox
-import markov
+import markov, Stream
 import tweepy
 import json, re, random, time, threading
 from html import unescape
@@ -131,7 +131,7 @@ class Bot():
         self.json_lock.acquire()
         #add tweets from the base account to the markov chain
         for tweet in tweets:
-            if not tweet.id_str in self.done and not "retweeted_status" in tweet._json and not tweet.id_str < self.last_id:
+            if not tweet.id_str in self.done and not "retweeted_status" in tweet._json and not int(tweet.id_str) < self.last_id:
                 if "extended_text" in tweet._json:
                     text = unescape(tweet.extended_tweet.full_text)
                     text = uni_norm(text)
@@ -288,7 +288,7 @@ class Bot():
 
         time.sleep(wait)
         #set up an event listener for base account tweets
-        self.listener = StreamList(self)
+        self.listener = Stream.listener(self)
         self.stream = tweepy.Stream(self.api.auth, self.listener)
         self.stream.filter(follow=[str(self.uid)], is_async=True)
         return
@@ -308,48 +308,6 @@ class Bot():
         self.post_thread.start()
         self.mention_thread.start()
         return
-
-class StreamList(tweepy.StreamListener):
-    """Manages the stream listener.
-    """
-
-    def __init__(self, bot):
-        self.bot = bot
-        self.api = bot.api
-
-    def on_status(self, status):
-        """Reacts to new tweets and sends them off to the markov chain.
-        
-        Arguments:
-            status {tweepy.Status} -- The tweet.
-        """
-
-        self.bot.last_id = status.id
-        self.bot.add_tweets([status])
-
-    def on_connect(self):
-        """Alerts the user that the stream has been connected.
-        """
-
-        print("Stream connected uwu")
-
-    def on_error(self, status_code):
-        """Reacts to errors.
-        
-        Arguments:
-            status_code {int} -- The error status code.
-        
-        Returns:
-            Boolean -- Always false to close the listener.
-        """
-
-        if status_code == 420:
-            print("I need to chill TwT")
-            self.bot.start_stream(60)
-        else:
-            print(status_code)
-            self.bot.start_stream()
-        return False
 
 
 if __name__ == "__main__":
