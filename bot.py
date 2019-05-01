@@ -267,7 +267,7 @@ class Bot():
             self.sleep_wrapper()
         while True:
             self.post_tweet()
-            self.wait = 7.2E3
+            self.wait = 3.6E3
             print("Waiting %s minutes until next post" % round(self.wait/60, 2))
             self.sleep_wrapper()
         return
