@@ -45,7 +45,7 @@ class Bot():
         self.chain = markov.Chain()
         #This really long regex array filters out tags, websites, tickers,
         #weird quotes, long white space, and beginning spaces.
-        self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?\$[A-Za-z]{1,6}',r'(?<=\s)"\s',r'(?<= ) {1,}', r'^ ', r'"']
+        self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?\$[A-Za-z]{1,6}(?![A-Za-z])',r'(?<=\s)"\s',r'(?<= ) {1,}', r'^ ', r'"']
 
     def dump(self, silent=False):
         """Dumps json data to file, thread safely.
@@ -131,7 +131,7 @@ class Bot():
         self.json_lock.acquire()
         #add tweets from the base account to the markov chain
         for tweet in tweets:
-            if not tweet.id_str in self.done and not "retweeted_status" in tweet._json:
+            if not tweet.id_str in self.done and not "retweeted_status" in tweet._json and not tweet.id_str < self.last_id:
                 if "extended_text" in tweet._json:
                     text = unescape(tweet.extended_tweet.full_text)
                     text = uni_norm(text)
