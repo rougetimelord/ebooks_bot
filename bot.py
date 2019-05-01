@@ -22,7 +22,6 @@ class Bot():
         try:
             with open('data.json', 'r') as f:
                 self.data = json.load(f)
-                self.done = self.data['done']
                 self.base = self.data['base']
                 self.keys = self.data['keys']
                 self.last_reply = self.data['last_reply']
@@ -31,7 +30,6 @@ class Bot():
                 self.wait = self.data['wait']
         except IOError:
             self.data = {}
-            self.done = []
             self.base = input('What account is your ebook based on? ')
             self.keys = {'con_k': input('Consumer key '), 'con_s': input('Consumer secret ')}
             self.last_reply = 1
@@ -57,11 +55,8 @@ class Bot():
         if not silent:
             print("Dumping json from bot uwu")
         self.lock.acquire()
-        #Truncate the list of done tweets as needed
-        if len(self.done) > 200:
-            self.done = self.done[-200:]
         
-        self.data = {'done': self.done, 'base': self.base, 'keys': self.keys, 'last_reply': self.last_reply, 'last_id': self.last_id, 'uid': self.uid, 'wait': self.wait}
+        self.data = {'base': self.base, 'keys': self.keys, 'last_reply': self.last_reply, 'last_id': self.last_id, 'uid': self.uid, 'wait': self.wait}
         try:
             with open('data.json', 'w') as f:
                 json.dump(self.data, f, indent=4, sort_keys=True)
@@ -131,7 +126,7 @@ class Bot():
         self.json_lock.acquire()
         #add tweets from the base account to the markov chain
         for tweet in tweets:
-            if not tweet.id_str in self.done and not "retweeted_status" in tweet._json and not int(tweet.id_str) < self.last_id:
+            if not "retweeted_status" in tweet._json and not int(tweet.id_str) < self.last_id:
                 if "extended_text" in tweet._json:
                     text = unescape(tweet.extended_tweet.full_text)
                     text = uni_norm(text)
@@ -145,7 +140,6 @@ class Bot():
                 if not len(text) == 0:
                     text += "\03"
                     self.chain.add_text(text)
-                self.done.append(tweet.id_str)
         self.json_lock.release()
         self.dump()
         return
