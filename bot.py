@@ -126,7 +126,7 @@ class Bot():
         self.json_lock.acquire()
         #add tweets from the base account to the markov chain
         for tweet in tweets:
-            if not "retweeted_status" in tweet._json and not int(tweet.id_str) < self.last_id:
+            if not "retweeted_status" in tweet._json:
                 if "extended_text" in tweet._json:
                     text = unescape(tweet.extended_tweet.full_text)
                     text = uni_norm(text)
@@ -152,19 +152,24 @@ class Bot():
         #get every tweet, since last start up, or get every tweet
         all_tweets = []
         try:
-            next_tweets = self.api.user_timeline(screen_name=self.base, count=200,
-                                                include_rts='false', since_id=self.last_id)
+            next_tweets = self.api.user_timeline(screen_name=self.base,
+                                                count=200,
+                                                include_rts='false', 
+                                                since_id=self.last_id)
             if len(next_tweets) == 0:
                 return
             all_tweets.extend(next_tweets)
-            old_id = all_tweets[-1].id - 1
-            last = old_id
+            max_id = all_tweets[0].id - 1
+            min_id = self.last_id
+            self.last_id = all_tweets[0].id
             while len(next_tweets) > 0:
-                next_tweets = self.api.user_timeline(screen_name=self.base, count=200,
-                                                    include_rts='false',max_id=old_id,since_id=self.last_id)
+                next_tweets = self.api.user_timeline(screen_name=self.base, 
+                                                    count=200,
+                                                    include_rts='false',
+                                                    max_id=max_id, 
+                                                    since_id=min_id)
                 all_tweets.extend(next_tweets)
-                old_id = all_tweets[-1].id - 1
-            self.last_id = last + 1
+                max_id = all_tweets[-1].id - 1
             self.dump(silent=True)
             self.add_tweets(all_tweets)
         except tweepy.TweepError as e:
