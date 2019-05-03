@@ -11,12 +11,10 @@ class Chain():
             with open('markov.json', 'r') as f:
                 self.data = json.load(f)
                 self.freq = self.data['freq']
-                self.roots = self.data['roots']
                 self.status = True
         except IOError:
             self.data = {}
-            self.freq = {}
-            self.roots = []
+            self.freq = {'\x02':[]}
             self.status = False
 
     def dump(self):
@@ -25,7 +23,6 @@ class Chain():
 
         self.data = {}
         self.data['freq'] = self.freq
-        self.data['roots'] = self.roots
         try:
             with open('markov.json', 'w', newline='') as f:
                 json.dump(self.data, f, indent=4, sort_keys=True)
@@ -47,9 +44,9 @@ class Chain():
 
         array = text.split()
         array.append(end)
-        if array[0] in '\03':
+        if array[0] == '\x03':
             return
-        self.roots.append(array[0])
+        self.freq['\x02'].append(array[0])
         while len(array) > 1:
             key = array[0]
             value = array[1]
@@ -67,7 +64,7 @@ class Chain():
             text {str} -- The text to add
         """
 
-        seps = '([\03])'
+        seps = '([\x02\x03])'
         pieces = re.split(seps, text)[:-1]
         while len(pieces) > 1:
             content = pieces[0]
@@ -86,10 +83,10 @@ class Chain():
         """
 
         res = ''
-        seps = '\03'
+        seps = '\x03'
         special = ',.?!'
         try:
-            word = random.choice(self.roots)
+            word = random.choice(self.freq['\x02'])
         except IndexError as e:
             print('Chosing a root failed with %s' % e)
             return ('', '')
@@ -104,7 +101,7 @@ class Chain():
                 return ('', '')
             if word in seps:
                 if length < 3:
-                    res = word = random.choice(self.roots)
+                    res = word = random.choice(self.freq['\x02'])
                     continue
                 else:
                     run = False
