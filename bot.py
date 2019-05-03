@@ -142,6 +142,7 @@ class Bot():
                     text += "\x03"
                     self.chain.add_text(text)
         self.json_lock.release()
+        print("Done adding tweets uwu")
         self.dump()
         return
 
