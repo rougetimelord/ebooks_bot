@@ -102,7 +102,10 @@ app.post('/post/reply', (req, res) => {
   }
 
   //Create a URI
-  let uri = "https://api.twitter.com/1.1/statuses/update.json?status=" + encodeURIComponent(req.query.status) + "&in_reply_to_status_id" + encodeURIComponent(req.query.reply_to_id);
+  let uri = "https://api.twitter.com/1.1/statuses/update.json?status=" 
+  uri += encodeURIComponent(req.query.status);
+  uri += "&in_reply_to_status_id";
+  uri += encodeURIComponent(req.query.reply_to_id);
   
   //Make a OAuth header for the request
   let oauthHelper = new OAuth(
@@ -157,7 +160,8 @@ app.post('/post/tweet', (req, res) => {
   }
 
   //Create the twitter API URI
-  let uri = "https://api.twitter.com/1.1/statuses/update.json?status=" + encodeURIComponent(req.query.status);
+  let uri = "https://api.twitter.com/1.1/statuses/update.json?status="; 
+  uri += encodeURIComponent(req.query.status);
   
   //Create a auth header
   let oauthHelper = new OAuth(
@@ -209,10 +213,10 @@ app.get('/user/tweets', (req, res) => {
   }
 
   //Create the URI
-  let params ="user_id="+req.query.user_id;
-  params += "&since_id="+req.query.since_id;
-  params += "&count=200&include_rts=false"
-  let uri = "https://api.twitter.com/1.1/statuses/user_timeline.json?"+params;
+  let uri = "https://api.twitter.com/1.1/statuses/user_timeline.json?";
+  uri += "user_id="+req.query.user_id;
+  uri += "&since_id="+req.query.since_id;
+  uri += "&count=200&include_rts=false";
 
   //Make the auth header
   let oauthHelper = new OAuth(
