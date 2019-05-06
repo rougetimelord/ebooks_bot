@@ -197,7 +197,7 @@ app.get('/user/tweets.json', (req, res) => {
 
   //Check if everything was supplied
   let errMsg = {errors: []}
-  if(!req.query.user_id || !req.query.since_id){
+  if(!req.query.screen_name || !req.query.since_id){
     errMsg.errors.push({
       "code": 2,
       "message": "Request missing user id or a since id."
@@ -214,7 +214,7 @@ app.get('/user/tweets.json', (req, res) => {
 
   //Create the URI
   let uri = "https://api.twitter.com/1.1/statuses/user_timeline.json?";
-  uri += "user_id="+req.query.user_id;
+  uri += "screen_name="+req.query.screen_name;
   uri += "&since_id="+req.query.since_id;
   if(req.query.max_id){
     uri += "&max_id="+req.query.max_id;
