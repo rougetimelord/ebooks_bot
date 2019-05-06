@@ -17,3 +17,7 @@ def make_request(url, params, method):
     except urllib.error.URLError as e:
         print('Oops messed up with %s' % url)
         return {'errors': e}
+
+def uni_norm(text):
+    return text.translate({0x2018:0x27, 0x2019:0x27, 0x201C:0x22, 0x201D:0x22,
+                          0xa0:0x20})
