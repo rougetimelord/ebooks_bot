@@ -29,7 +29,7 @@ app.use((req, res, next) => {
   res.redirect('https://' + req.header.host + req.url);
 }); */
 
-app.get('/auth/authorize', (req, res) => {
+app.get('/auth/authorize.json', (req, res) => {
   /**
    * Creates an app authorization url for the client.
    */
@@ -46,7 +46,7 @@ app.get('/auth/authorize', (req, res) => {
   });
 });
 
-app.get('/auth/callback', (req, res) => {
+app.get('/auth/callback.json', (req, res) => {
   /**
    * Handles the callback and gives the client an OAuth token.
    * 
@@ -76,7 +76,7 @@ app.get('/', (req, res) => {
   res.send('nothing here but us cats');
 });
 
-app.post('/post/reply', (req, res) => {
+app.post('/post/reply.json', (req, res) => {
   /**
    * Posts a reply to a tweet.
    * 
@@ -135,7 +135,7 @@ app.post('/post/reply', (req, res) => {
   })
 })
 
-app.post('/post/tweet', (req, res) => {
+app.post('/post/tweet.json', (req, res) => {
   /**
    * Posts a new tweet.
    * 
@@ -188,7 +188,7 @@ app.post('/post/tweet', (req, res) => {
   })
 });
 
-app.get('/user/tweets', (req, res) => {
+app.get('/user/tweets.json', (req, res) => {
   /**
    * Gets tweets from a user.
    * 
