@@ -216,6 +216,9 @@ app.get('/user/tweets.json', (req, res) => {
   let uri = "https://api.twitter.com/1.1/statuses/user_timeline.json?";
   uri += "user_id="+req.query.user_id;
   uri += "&since_id="+req.query.since_id;
+  if(req.query.max_id){
+    uri += "&max_id="+req.query.max_id;
+  }
   uri += "&count=200&include_rts=false";
 
   //Make the auth header
