@@ -179,8 +179,8 @@ class Bot():
         if not self.wait == 0:
             print("Waiting %s minutes b4 posting" % round(self.wait / 60, 2))
         self.get_tweets()
-        #self.post_thread = threading.Thread(target=self.post_wrapper, name="Post_Thread")
-        #self.post_thread.start()
+        self.post_thread = threading.Thread(target=self.post_wrapper, name="Post_Thread")
+        self.post_thread.start()
         return
 
 if __name__ == "__main__":
