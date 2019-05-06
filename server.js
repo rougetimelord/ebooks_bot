@@ -60,7 +60,7 @@ app.get('/auth/callback.json', (req, res) => {
     if(err) {
       console.log('failed callback', err);
       res.send({
-        'error': err
+        'errors': err
       });
       return;
     }
