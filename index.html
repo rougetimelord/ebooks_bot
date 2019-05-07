@@ -58,6 +58,8 @@
             let key_got = new URL(window.location).searchParams.get('oauth_verifier');
             document.getElementById('key').value = key_got;
             document.body.classList = (key_got) ? 's' : 'f';
+            key_got = new URL(window.location).searchParams.get('oauth_token');
+            document.getElementById('oauth').value = key_got;
             let i = 0;
             if(!key_got){document.getElementById('verify').innerText="Key was not found"}
             else{
@@ -89,6 +91,7 @@
         Your verifier is:
         <div>
             <input type="text" id='key' readonly="readonly">
+            <input type="text" id='oauth' readonly="readonly">
         </div>
         Enter this into main python window, click anywhere to copy
     </div>
