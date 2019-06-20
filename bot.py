@@ -195,7 +195,7 @@ class Bot():
         except URL_Error as f:
             print("%s happened owo" % f)
             a = False
-            while a == False:
+            while not a:
                 a = self.ping()
                 time.sleep(60)
         return
@@ -213,13 +213,14 @@ class Bot():
             print("No mentions uwu")
             return
 
+        #Skip posting on first start-up
         if self.last_id == 1:
             self.last_reply = mentions[0].id
             return
 
+        #Grab the latest ID and post away
         self.last_reply = mentions[0].id
         for tweet in mentions:
-            self.last_reply = tweet.id
             self.post_reply(tweet.id)
         return
 
