@@ -125,7 +125,6 @@ class Chain():
         """
 
         res = ''
-        length = 1
 
         for _ in range(length):
             res += self.generate_sentence()

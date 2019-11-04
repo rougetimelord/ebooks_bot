@@ -253,7 +253,7 @@ class Bot():
         print("Posting a tweet")
         self.json_lock.acquire()
         #post a generated tweet
-        text = self.chain.generate_text(random.randint(1, 5))
+        text = self.chain.generate_text(random.randint(1, 3))
         try:
             self.api.update_status(status=text)
         except tweepy.TweepError as e:
