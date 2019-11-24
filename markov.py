@@ -10,19 +10,16 @@ class Chain():
         try:
             with open('markov.json', 'r') as f:
                 self.data = json.load(f)
-                self.freq = self.data['freq']
                 self.status = True
         except IOError:
             self.data = {}
-            self.freq = {'\x02':[]}
+            self.data['freq'] = {'\x02':[]}
             self.status = False
 
     def dump(self):
         """Dumps dictionary to JSON.
         """
 
-        self.data = {}
-        self.data['freq'] = self.freq
         try:
             with open('markov.json', 'w', newline='') as f:
                 json.dump(self.data, f, indent=4, sort_keys=True)
@@ -46,15 +43,15 @@ class Chain():
         array.append(end)
         if array[0] == '\x03':
             return
-        self.freq['\x02'].append(array[0])
+        self.data['freq']['\x02'].append(array[0])
         while len(array) > 1:
             key = array[0]
             value = array[1]
             if key != '' and value != '':
-                if key in self.freq:
-                    self.freq[key].append(value)
+                if key in self.data['freq']:
+                    self.data['freq'][key].append(value)
                 else:
-                    self.freq[key] = [value]
+                    self.data['freq'][key] = [value]
             array.pop(0)
 
     def add_text(self, text):
@@ -71,8 +68,7 @@ class Chain():
             if len(content) != 0 and content[0] != ' ':
                 end = pieces[1]
                 self.add_sentence(content, end)
-            pieces.pop(0)
-            pieces.pop(0)
+            pieces = pieces[2:]
         self.dump()
 
     def generate_sentence(self):
@@ -85,37 +81,32 @@ class Chain():
         res = ''
         seps = '\x03'
         special = ',.?!'
-        try:
-            word = random.choice(self.freq['\x02'])
-        except IndexError as e:
-            print('Chosing a root failed with %s' % e)
-            return ('', '')
+        word = random.choice(self.data['freq']['\x02'])
         res += word
         run = True
         length = 1
         while run:
             try:
-                word = random.choice(self.freq[word])
+                word = random.choice(self.data['freq'][word])
             except KeyError as e:
-                print('Chosing word failed with %s' % e)
+                print('Choosing word failed with %s' % e)
                 return ('', '')
             if word in seps:
                 if length < 3:
-                    res = word = random.choice(self.freq['\x02'])
+                    res = word = random.choice(self.data['freq']['\x02'])
                     continue
                 else:
                     run = False
                     break
-            elif not word in seps:
-                if word in special:
-                    res += word + ' '
-                else:
-                    res += ' ' + word
-                length += 1
+            elif word in special:
+                res += word + ' '
+            else:
+                res += ' ' + word
+            length += 1
         return res
 
     def generate_text(self, length):
-        """Generates a certain length(ish) amount of text.
+        """Generates text with length number of sentences.
 
         Arguments:
             length {int} -- How many sentences to make
@@ -128,6 +119,8 @@ class Chain():
 
         for _ in range(length):
             res += self.generate_sentence()
+            if length > 1:
+                res += ' '
 
         return res
         
