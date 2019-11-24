@@ -184,6 +184,11 @@ class Bot():
             print("No mentions uwu")
             return
 
+        #Skip posting on first start-up
+        if self.last_id == 1:
+            self.last_reply = mentions[0].id
+            return
+
         #Grab the latest ID and post away
         self.data['last_reply'] = mentions[0].id
         for tweet in mentions:
