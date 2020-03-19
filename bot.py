@@ -133,10 +133,9 @@ class Bot():
         #get every tweet, since last start up, or get every tweet
         all_tweets = []
         try:
-            next_tweets = self.api.user_timeline(screen_name=self.data['base'],
-                                                count=200,
-                                                include_rts='false', 
-                                                since_id=self.data['last_id'])
+            next_tweets = self.api.user_timeline(
+                screen_name=self.data['base'], count=200, include_rts='false', 
+                since_id=self.data['last_id'])
             if len(next_tweets) == 0:
                 return
             all_tweets.extend(next_tweets)
@@ -145,11 +144,9 @@ class Bot():
             self.data['last_id'] = all_tweets[0].id
             max_id =  self.data['last_id'] - 1
             while len(next_tweets) > 0:
-                next_tweets = self.api.user_timeline(screen_name=self.data['base'], 
-                                                    count=200,
-                                                    include_rts='false',
-                                                    max_id=max_id, 
-                                                    since_id=min_id)
+                next_tweets = self.api.user_timeline(
+                    screen_name=self.data['base'], count=200, 
+                    include_rts='false', max_id=max_id, since_id=min_id)
                 all_tweets.extend(next_tweets)
                 max_id = all_tweets[-1].id - 1
             self.dump(silent=True)
