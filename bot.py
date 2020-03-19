@@ -6,6 +6,7 @@ import json, re, time, threading
 from html import unescape
 from urllib.error import URLError as URL_Error
 import urllib.request as request
+from datetime import datetime as date
 
 def uni_norm(text):
     return text.translate({0x2018:0x27, 0x2019:0x27, 0x201C:0x22, 0x201D:0x22,
@@ -29,11 +30,11 @@ class Bot():
             self.data['last_reply'] = 1
             self.data['last_id'] = 1
             self.data['uid'] = 0
-            self.data['wait'] = 0
             self.dump()
         self.api = self.connect()
         if self.data['uid'] == 0:
             self.data['uid'] = self.api.lookup_users(screen_names=[self.data['base']])[0].id
+        self.wait = 60 - date.now().minute
         self.chain = markov.Chain()
         #This really long regex array filters out tags, websites, tickers,
         #weird quotes, long white space, and beginning spaces.
@@ -213,11 +214,11 @@ class Bot():
         """Wraps sleeping in a method that prints the JSON every minute.
         """
 
-        time_wait = int(self.data['wait'])
+        time_wait = int(self.wait)
         for _ in range(0, time_wait):
             time.sleep(1)
-            self.data['wait'] -= 1
-            if self.data['wait'] % 60 == 0:
+            self.wait -= 1
+            if self.wait % 60 == 0:
                 self.dump(silent=True)
         return
 
@@ -246,7 +247,7 @@ class Bot():
             self.sleep_wrapper()
         while True:
             self.post_tweet()
-            self.data['wait'] = 3.6E3
+            self.wait = 60 - date.now().minute
             print("Waiting %s minutes until next post" % round(self.data['wait']/60, 2))
             self.sleep_wrapper()
         return
