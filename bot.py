@@ -34,7 +34,8 @@ class Bot():
         self.api = self.connect()
         if self.data['uid'] == 0:
             self.data['uid'] = self.api.lookup_users(screen_names=[self.data['base']])[0].id
-        self.wait = (60 - date.now().minute) * 60
+        d = date.now()
+        self.wait = 3.6E3 - (60 * d.minute + d.second)
         self.chain = markov.Chain()
         #This really long regex array filters out tags, websites, tickers,
         #weird quotes, long white space, and beginning spaces.
@@ -244,7 +245,8 @@ class Bot():
             self.sleep_wrapper()
         while True:
             self.post_tweet()
-            self.wait = (60 - date.now().minute) * 60
+            d = date.now()
+            self.wait = 3.6E3 - (60 * d.minute + d.second)
             print("Waiting %s minutes until next post" % round(self.wait / 60, 2))
             self.sleep_wrapper()
         return
