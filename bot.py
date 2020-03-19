@@ -37,7 +37,10 @@ class Bot():
         self.chain = markov.Chain()
         #This really long regex array filters out tags, websites, tickers,
         #weird quotes, long white space, and beginning spaces.
-        self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})(?![A-Z0-9a-z])', r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*', r' ?\$[A-Za-z]{1,6}(?![A-Za-z])',r'(?<=\s)"\s',r'(?<= ) {1,}', r'^ ', r'"']
+        self.ignore = [r'[ |\.]?(@[A-Za-z0-9_]{1,15})(?![A-Z0-9a-z])',
+            r' ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*',
+            r' ?\$[A-Za-z]{1,6}(?![A-Za-z])',r'(?<=\s)"\s',
+            r'(?<= ) {1,}', r'^ ', r'"']
 
     def dump(self, silent=False):
         """Dumps json data to file, thread safely.
@@ -70,7 +73,8 @@ class Bot():
         #connect to twitter api
         auth = tweepy.OAuthHandler(self.data['keys']['con_k'], self.data['keys']['con_s'], "https://auth.r0uge.org")
         if 'acc_k' in self.data['keys'] and 'acc_s' in self.data['keys']:
-            auth.set_access_token(self.data['keys']['acc_k'], self.data['keys']['acc_s'])
+            auth.set_access_token(self.data['keys']['acc_k'],
+                self.data['keys']['acc_s'])
         else:
             #if an access token hasn't been generated yet, go through the process of getting one
             try:
