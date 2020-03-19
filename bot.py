@@ -34,7 +34,7 @@ class Bot():
         self.api = self.connect()
         if self.data['uid'] == 0:
             self.data['uid'] = self.api.lookup_users(screen_names=[self.data['base']])[0].id
-        self.wait = 60 - date.now().minute
+        self.wait = (60 - date.now().minute) * 60
         self.chain = markov.Chain()
         #This really long regex array filters out tags, websites, tickers,
         #weird quotes, long white space, and beginning spaces.
@@ -240,12 +240,12 @@ class Bot():
         """Wraps tweet posting so that it can be on it's own thread.
         """
 
-        if not self.data['wait'] == 0:
+        if not self.wait == 0:
             self.sleep_wrapper()
         while True:
             self.post_tweet()
-            self.wait = 60 - date.now().minute
-            print("Waiting %s minutes until next post" % round(self.data['wait']/60, 2))
+            self.wait = (60 - date.now().minute) * 60
+            print("Waiting %s minutes until next post" % round(self.wait / 60, 2))
             self.sleep_wrapper()
         return
 
@@ -268,8 +268,8 @@ class Bot():
         """
 
         print("Starting bot")
-        if not self.data['wait'] == 0:
-            print('Waiting for %s minutes before tweeting uwu' % round(self.data['wait'] / 60, 2))
+        if not self.wait == 0:
+            print('Waiting for %s minutes before tweeting uwu' % round(self.wait / 60, 2))
         self.get_tweets()
         self.start_stream()
         #create threads for posting and mentions
