@@ -75,7 +75,7 @@ class Chain():
         """Generates a sentence of text.
     
         Returns:
-            tuple -- A tuple with (String sentence, String ending_punctuation).
+            str -- The sentence generated.
         """
 
         res = ''
@@ -84,7 +84,6 @@ class Chain():
         word = random.choice(self.data['freq']['\x02'])
         res += word
         run = True
-        length = 1
         while run:
             try:
                 word = random.choice(self.data['freq'][word])
@@ -92,17 +91,12 @@ class Chain():
                 print('Choosing word failed with %s' % e)
                 return ('', '')
             if word in seps:
-                if length < 3:
-                    res = word = random.choice(self.data['freq']['\x02'])
-                    continue
-                else:
-                    run = False
-                    break
+                run = False
+                break
             elif word in special:
                 res += word + ' '
             else:
                 res += ' ' + word
-            length += 1
         return res
 
     def generate_text(self, length):
