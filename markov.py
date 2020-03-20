@@ -1,19 +1,20 @@
-#markov.py, a markov chain manager
-#Copyright (C) 2018 Blair "rouge" LaCriox
+# markov.py, a markov chain manager
+# Copyright (C) 2018 Blair "rouge" LaCriox
 import random, re, json
 
-class Chain():
+
+class Chain:
     def __init__(self):
         """Reads the JSON or starts a new one.
         """
 
         try:
-            with open('markov.json', 'r') as f:
+            with open("markov.json", "r") as f:
                 self.data = json.load(f)
                 self.status = True
         except IOError:
             self.data = {}
-            self.data['freq'] = {'\x02':[]}
+            self.data["freq"] = {"\x02": []}
             self.status = False
 
     def dump(self):
@@ -21,11 +22,11 @@ class Chain():
         """
 
         try:
-            with open('markov.json', 'w', newline='') as f:
+            with open("markov.json", "w", newline="") as f:
                 json.dump(self.data, f)
         except:
             try:
-                with open('markov.json', 'w+', newline='') as f:
+                with open("markov.json", "w+", newline="") as f:
                     json.dump(self.data, f)
             except IOError as e:
                 print("%s, exiting" % e)
@@ -41,17 +42,17 @@ class Chain():
 
         array = text.split()
         array.append(end)
-        if array[0] == '\x03':
+        if array[0] == "\x03":
             return
-        self.data['freq']['\x02'].append(array[0])
+        self.data["freq"]["\x02"].append(array[0])
         while len(array) > 1:
             key = array[0]
             value = array[1]
-            if key != '' and value != '':
-                if key in self.data['freq']:
-                    self.data['freq'][key].append(value)
+            if key != "" and value != "":
+                if key in self.data["freq"]:
+                    self.data["freq"][key].append(value)
                 else:
-                    self.data['freq'][key] = [value]
+                    self.data["freq"][key] = [value]
             array.pop(0)
 
     def add_text(self, text):
@@ -61,11 +62,11 @@ class Chain():
             text {str} -- The text to add
         """
 
-        seps = '([\x02\x03])'
+        seps = "([\x02\x03])"
         pieces = re.split(seps, text)[:-1]
         while len(pieces) > 1:
             content = pieces[0]
-            if len(content) != 0 and content[0] != ' ':
+            if len(content) != 0 and content[0] != " ":
                 end = pieces[1]
                 self.add_sentence(content, end)
             pieces = pieces[2:]
@@ -78,25 +79,25 @@ class Chain():
             str -- The sentence generated.
         """
 
-        res = ''
-        seps = '\x03'
-        special = ',.?!'
-        word = random.choice(self.data['freq']['\x02'])
+        res = ""
+        seps = "\x03"
+        special = ",.?!"
+        word = random.choice(self.data["freq"]["\x02"])
         res += word
         run = True
         while run:
             try:
-                word = random.choice(self.data['freq'][word])
+                word = random.choice(self.data["freq"][word])
             except KeyError as e:
-                print('Choosing word failed with %s' % e)
-                return ('', '')
+                print("Choosing word failed with %s" % e)
+                return ("", "")
             if word in seps:
                 run = False
                 break
             elif word in special:
-                res += word + ' '
+                res += word + " "
             else:
-                res += ' ' + word
+                res += " " + word
         return res
 
     def generate_text(self, length):
@@ -109,15 +110,15 @@ class Chain():
             str -- The text generated.
         """
 
-        res = ''
+        res = ""
 
         for _ in range(length):
             res += self.generate_sentence()
             if length > 1:
-                res += ' '
+                res += " "
 
         return res
-        
+
 
 if __name__ == "__main__":
     print("This won't work")

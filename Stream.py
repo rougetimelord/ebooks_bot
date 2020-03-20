@@ -1,5 +1,6 @@
 import tweepy
 
+
 class listener(tweepy.StreamListener):
     """Manages the stream listener.
     """
