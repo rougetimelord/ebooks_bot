@@ -23,11 +23,11 @@ class Chain:
 
         try:
             with open("markov.json", "w", newline="") as f:
-                json.dump(self.data, f)
+                json.dump(self.data, f, indent=4, sort_keys=True)
         except:
             try:
                 with open("markov.json", "w+", newline="") as f:
-                    json.dump(self.data, f)
+                    json.dump(self.data, f, indent=4, sort_keys=True)
             except IOError as e:
                 print("%s, exiting" % e)
                 exit()
