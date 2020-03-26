@@ -8,6 +8,8 @@ from urllib.error import URLError as URL_Error
 import urllib.request as request
 from datetime import datetime as date
 
+VERSION = "1.0"
+
 
 def uni_norm(text):
     return text.translate(
@@ -300,7 +302,7 @@ class Bot:
         """Really starts up the bot.
         """
 
-        print("Starting bot")
+        print("Starting bot v" + VERSION)
         if not self.wait == 0:
             print(
                 "Waiting for %s minutes before tweeting uwu" % round(self.wait / 60, 2)
