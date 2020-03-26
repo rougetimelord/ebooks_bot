@@ -125,9 +125,14 @@ class Bot:
         self.json_lock.acquire()
         # add tweets from the base account to the markov chain
         for tweet in tweets:
-            if not tweet.retweeted:
+            if not tweet.retweeted and tweet.author.id == self.data["uid"]:
                 text = "\x02"
-                text += uni_norm(tweet.full_text)
+                if tweet.truncated:
+                    text += uni_norm(tweet.extended_tweet["full_text"])
+                elif hasattr(tweet, "full_text"):
+                    text += uni_norm(tweet.full_text)
+                else:
+                    text += uni_norm(tweet.text)
                 for pat in self.ignore:
                     text = re.sub(pat, "", text)
                 text = re.sub(r"\n{2,}", "\n", text)
@@ -214,7 +219,7 @@ class Bot:
             return
 
         # Skip posting on first start-up
-        if self.last_id == 1:
+        if self.data["last_id"] == 1:
             self.last_reply = mentions[0].id
             return
 
