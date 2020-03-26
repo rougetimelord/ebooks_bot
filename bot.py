@@ -125,18 +125,13 @@ class Bot:
         self.json_lock.acquire()
         # add tweets from the base account to the markov chain
         for tweet in tweets:
-            if not "retweeted_status" in tweet._json:
+            if not tweet.retweeted:
                 text = "\x02"
-                if "extended_text" in tweet._json:
-                    text_temp = unescape(tweet.extended_tweet.full_text)
-                    text += uni_norm(text_temp)
-                else:
-                    text_temp = unescape(tweet.text)
-                    text += uni_norm(text_temp)
+                text += uni_norm(tweet.full_text)
                 for pat in self.ignore:
                     text = re.sub(pat, "", text)
                 text = re.sub(r"\n{2,}", "\n", text)
-                if not len(text) == 0:
+                if not len(text) <= 1:
                     text += "\x03"
                     self.chain.add_text(text)
         self.json_lock.release()
@@ -157,6 +152,7 @@ class Bot:
                 count=200,
                 include_rts="false",
                 since_id=self.data["last_id"],
+                tweet_mode="extended",
             )
             if len(next_tweets) == 0:
                 return
@@ -172,6 +168,7 @@ class Bot:
                     include_rts="false",
                     max_id=max_id,
                     since_id=min_id,
+                    tweet_mode="extended",
                 )
                 all_tweets.extend(next_tweets)
                 max_id = all_tweets[-1].id - 1
