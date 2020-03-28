@@ -1,6 +1,6 @@
-# Bot.py, a manager of interactions with the twitter api
+# bot.py, a manager of interactions with the twitter api
 # Copyright (C) 2018 Blair "rouge" LaCriox
-import Markov, Stream
+import markov, Stream
 import tweepy
 import json, re, time, threading
 from html import unescape
@@ -47,7 +47,7 @@ class Bot:
             ].id
         d = date.now()
         self.wait = 3.6e3 - (60 * d.minute + d.second)
-        self.chain = Markov.Chain()
+        self.chain = markov.Chain()
         # This really long regex array filters out tags, websites, tickers,
         # weird quotes, long white space, and beginning spaces.
         self.ignore = [
