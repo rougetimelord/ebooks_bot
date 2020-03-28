@@ -8,13 +8,14 @@ from urllib.error import URLError as URL_Error
 import urllib.request as request
 from datetime import datetime as date
 
-VERSION = "1.0"
+VERSION = "1.1"
 
 
 def uni_norm(text):
-    return text.translate(
+    text = text.translate(
         {0x2018: 0x27, 0x2019: 0x27, 0x201C: 0x22, 0x201D: 0x22, 0xA0: 0x20}
     )
+    return unescape(text)
 
 
 class Bot:
