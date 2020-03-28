@@ -129,7 +129,7 @@ class Bot:
         self.markov_lock.acquire()
         # add tweets from the base account to the markov chain
         for tweet in tweets:
-            if not tweet.retweeted and tweet.author.id == self.data["uid"]:
+            if tweet.author.id == self.data["uid"]:
                 text = "\x02"
                 if tweet.truncated:
                     text += uni_norm(tweet.extended_tweet["full_text"])
