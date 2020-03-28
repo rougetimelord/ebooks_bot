@@ -3,7 +3,7 @@
 A python twitter bot to do what horse_ebooks does.
 
 ## Requirements
-- tweepy
+- tweepy (`pip install -r requirements.txt`)
 - a set of Twitter API keys
 - a Twitter account to post to (I mean you could run it on main but 🤷)
 
