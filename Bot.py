@@ -8,7 +8,7 @@ from urllib.error import URLError as URL_Error
 import urllib.request as request
 from datetime import datetime as date
 
-VERSION = "1.1"
+VERSION = "1.1.1"
 
 
 def uni_norm(text):
@@ -30,15 +30,16 @@ class Bot:
             with open("data.json", "r") as f:
                 self.data = json.load(f)
         except IOError:
-            self.data = {}
-            self.data["base"] = input("What account is your ebook based on? ")
-            self.data["keys"] = {
-                "con_k": input("Consumer key "),
-                "con_s": input("Consumer secret "),
+            self.data = {
+                "base": input("What account is your ebook based on? "),
+                "keys": {
+                    "con_k": input("Consumer key "),
+                    "con_s": input("Consumer secret "),
+                },
+                "last_id": 1,
+                "last_reply": 1,
+                "uid": 0,
             }
-            self.data["last_reply"] = 1
-            self.data["last_id"] = 1
-            self.data["uid"] = 0
             self.dump()
         self.api = self.connect()
         if self.data["uid"] == 0:
