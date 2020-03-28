@@ -8,7 +8,7 @@ from urllib.error import URLError as URL_Error
 import urllib.request as request
 from datetime import datetime as date
 
-VERSION = "1.1.1"
+VERSION = "1.1.2"
 
 
 def uni_norm(text):
@@ -24,8 +24,8 @@ class Bot:
         """
 
         print("Initiating bot uwu")
-        self.lock = threading.Lock()
         self.json_lock = threading.Lock()
+        self.markov_lock = threading.Lock()
         try:
             with open("data.json", "r") as f:
                 self.data = json.load(f)
@@ -70,7 +70,7 @@ class Bot:
 
         if not silent:
             print("Dumping json from bot uwu")
-        self.lock.acquire()
+        self.json_lock.acquire()
 
         try:
             with open("data.json", "w") as f:
@@ -78,7 +78,7 @@ class Bot:
         except IOError:
             with open("data.json", "w+") as f:
                 json.dump(self.data, f, indent=4, sort_keys=True)
-        self.lock.release()
+        self.json_lock.release()
         return
 
     def connect(self):
@@ -126,7 +126,7 @@ class Bot:
         """
 
         print("Adding %s tweet(s) nwn" % len(tweets))
-        self.json_lock.acquire()
+        self.markov_lock.acquire()
         # add tweets from the base account to the markov chain
         for tweet in tweets:
             if not tweet.retweeted and tweet.author.id == self.data["uid"]:
@@ -143,7 +143,7 @@ class Bot:
                 if not len(text) <= 1:
                     text += "\x03"
                     self.chain.add_text(text)
-        self.json_lock.release()
+        self.markov_lock.release()
         print("Done adding tweets uwu")
         self.dump()
         return
@@ -260,7 +260,7 @@ class Bot:
         """
 
         print("Posting a tweet")
-        self.json_lock.acquire()
+        self.markov_lock.acquire()
         # post a generated tweet
         text = self.chain.generate_text(1)
         try:
@@ -269,7 +269,7 @@ class Bot:
             print("Failed to post tweet with %s OWO" % e)
         except URL_Error as f:
             print("%s happened owo" % f)
-        self.json_lock.release()
+        self.markov_lock.release()
         return
 
     def post_wrapper(self):
