@@ -25,6 +25,10 @@ class listener(tweepy.StreamListener):
 
         print("Stream connected uwu")
 
+    def on_disconnect(self, notice):
+        print(notice)
+        self.bot.start_stream()
+
     def on_error(self, status_code):
         """Reacts to errors.
         
