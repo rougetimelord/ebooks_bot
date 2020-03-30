@@ -8,7 +8,7 @@ from urllib.error import URLError as URL_Error
 import urllib.request as request
 from datetime import datetime as date
 
-VERSION = "1.1.2"
+VERSION = "1.1.3"
 
 
 def uni_norm(text):
@@ -214,8 +214,11 @@ class Bot:
         """
 
         print("Checking mentions")
-        # check for the last 20 mentions since the last check, then reply
-        mentions = self.api.mentions_timeline(since_id=self.data["last_reply"])
+        try:
+            # check for the last 20 mentions since the last check, then reply
+            mentions = self.api.mentions_timeline(since_id=self.data["last_reply"])
+        except tweepy.TweepError as e:
+            print("%s happened owo" % e)
         if len(mentions) != 0:
             print("Found %s mentions!" % len(mentions))
         else:
