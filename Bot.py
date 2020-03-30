@@ -43,9 +43,9 @@ class Bot:
             self.dump()
         self.api = self.connect()
         if self.data["uid"] == 0:
-            self.data["uid"] = self.api.lookup_users(screen_names=[self.data["base"]])[
-                0
-            ].id
+            self.data["uid"] = self.api.lookup_users(
+                screen_names=[self.data["base"]]
+            )[0].id
         d = date.now()
         self.wait = 3.6e3 - (60 * d.minute + d.second)
         self.chain = Markov.Chain()
@@ -216,7 +216,9 @@ class Bot:
         print("Checking mentions")
         try:
             # check for the last 20 mentions since the last check, then reply
-            mentions = self.api.mentions_timeline(since_id=self.data["last_reply"])
+            mentions = self.api.mentions_timeline(
+                since_id=self.data["last_reply"]
+            )
         except tweepy.TweepError as e:
             print("%s happened owo" % e)
         if len(mentions) != 0:
@@ -285,7 +287,9 @@ class Bot:
             self.post_tweet()
             d = date.now()
             self.wait = 3.6e3 - (60 * d.minute + d.second)
-            print("Waiting %s minutes until next post" % round(self.wait / 60, 2))
+            print(
+                "Waiting %s minutes until next post" % round(self.wait / 60, 2)
+            )
             self.sleep_wrapper()
         return
 
@@ -310,7 +314,8 @@ class Bot:
         print("Starting bot v" + VERSION)
         if not self.wait == 0:
             print(
-                "Waiting for %s minutes before tweeting uwu" % round(self.wait / 60, 2)
+                "Waiting for %s minutes before tweeting uwu"
+                % round(self.wait / 60, 2)
             )
         self.get_tweets()
         self.start_stream()

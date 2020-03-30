@@ -59,7 +59,9 @@ ids = []
 
 def format_day(date):
     day = "0" + str(date.day) if len(str(date.day)) == 1 else str(date.day)
-    month = "0" + str(date.month) if len(str(date.month)) == 1 else str(date.month)
+    month = (
+        "0" + str(date.month) if len(str(date.month)) == 1 else str(date.month)
+    )
     year = str(date.year)
     return "-".join([year, month, day])
 
@@ -102,7 +104,9 @@ for day in range(math.ceil(days / 60)):
 
         while len(found_tweets) >= increment:
             # Scroll down
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            driver.execute_script(
+                "window.scrollTo(0, document.body.scrollHeight);"
+            )
             sleep(delay)
 
             found_tweets = driver.find_elements_by_css_selector(tweet_selector)
