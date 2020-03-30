@@ -8,7 +8,7 @@ from urllib.error import URLError as URL_Error
 import urllib.request as request
 from datetime import datetime as date
 
-VERSION = "1.1.3"
+VERSION = "1.1.4"
 
 
 def uni_norm(text):
@@ -43,9 +43,13 @@ class Bot:
             self.dump()
         self.api = self.connect()
         if self.data["uid"] == 0:
-            self.data["uid"] = self.api.lookup_users(
-                screen_names=[self.data["base"]]
-            )[0].id
+            try:
+                self.data["uid"] = self.api.lookup_users(
+                    screen_names=[self.data["base"]]
+                )[0].id
+            except tweepy.TweepError as e:
+                print("Couldn't get uid twt")
+                exit()
         d = date.now()
         self.wait = 3.6e3 - (60 * d.minute + d.second)
         self.chain = Markov.Chain()
