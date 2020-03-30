@@ -8,7 +8,7 @@ from urllib.error import URLError as URL_Error
 import urllib.request as request
 from datetime import datetime as date
 
-VERSION = "1.1.4"
+VERSION = "1.1.4.1"
 
 
 def uni_norm(text):
@@ -33,8 +33,8 @@ class Bot:
             self.data = {
                 "base": input("What account is your ebook based on? "),
                 "keys": {
-                    "con_k": input("Consumer key "),
-                    "con_s": input("Consumer secret "),
+                    "consumer_token": input("Consumer key "),
+                    "consumer_secret": input("Consumer secret "),
                 },
                 "last_id": 1,
                 "last_reply": 1,
@@ -95,13 +95,17 @@ class Bot:
         print("Connecting to Twitter API")
         # connect to twitter api
         auth = tweepy.OAuthHandler(
-            self.data["keys"]["con_k"],
-            self.data["keys"]["con_s"],
+            self.data["keys"]["consumer_token"],
+            self.data["keys"]["consumer_secret"],
             "https://auth.r0uge.org",
         )
-        if "acc_k" in self.data["keys"] and "acc_s" in self.data["keys"]:
+        if (
+            "access_token" in self.data["keys"]
+            and "access_secret" in self.data["keys"]
+        ):
             auth.set_access_token(
-                self.data["keys"]["acc_k"], self.data["keys"]["acc_s"]
+                self.data["keys"]["access_token"],
+                self.data["keys"]["access_secret"],
             )
         else:
             # if an access token hasn't been generated yet, go through the process of getting one
@@ -117,8 +121,8 @@ class Bot:
             except tweepy.TweepError:
                 print("Failed to get access token, exitting OWO")
                 exit()
-            self.data["keys"]["acc_k"] = auth.access_token
-            self.data["keys"]["acc_s"] = auth.access_token_secret
+            self.data["keys"]["access_token"] = auth.access_token
+            self.data["keys"]["access_secret"] = auth.access_token_secret
             self.dump()
         return tweepy.API(auth)
 
