@@ -52,7 +52,7 @@ start = api.get_user(id=data["uid"]).created_at
 end = datetime.datetime.now()
 
 days = (end - start).days + 1
-tweet_selector = "article > div > div > div:nth-child(2) > div > div:nth-child(1) > div > div > div > a"
+tweet_selector = "article > div > div > :nth-child(2) > :nth-child(2) > :nth-child(1) > div > div > :nth-child(1) > a"
 user = data["base"].lower()
 ids = []
 
@@ -67,14 +67,14 @@ def format_day(date):
 
 
 def form_url(since, until):
-    p1 = "https://twitter.com/search?f=tweets&vertical=default&q=from%3A"
+    p1 = "https://twitter.com/search?&q=from%3A"
     p2 = (
         user
         + "%20since%3A"
         + since
         + "%20until%3A"
         + until
-        + "include%3Aretweets&src=typd"
+        + "&src=typed_query"
     )
     return p1 + p2
 
