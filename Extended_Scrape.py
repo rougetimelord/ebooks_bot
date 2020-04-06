@@ -32,7 +32,7 @@ auth = tweepy.OAuthHandler(
 )
 if "access_token" in data["keys"] and "access_secret" in data["keys"]:
     auth.set_access_token(
-        data["keys"]["acc_token"], data["keys"]["access_secret"]
+        data["keys"]["access_token"], data["keys"]["access_secret"]
     )
 else:
     # if an access token hasn't been generated yet, go through the process of getting one
@@ -134,7 +134,7 @@ driver.close()
 
 final_ids = list(set(ids))
 final_ids = [int(i) for i in final_ids]
-print("Final number of ids : %s".format(len(final_ids)))
+print("Final number of ids : %s" % len(final_ids))
 
 
 def chunks(lst, n):
