@@ -26,10 +26,14 @@ except IOError as e:
 print("Connecting to Twitter API")
 # connect to twitter api
 auth = tweepy.OAuthHandler(
-    data["keys"]["con_k"], data["keys"]["con_s"], "https://auth.r0uge.org",
+    data["keys"]["consumer_token"],
+    data["keys"]["consumer_secret"],
+    "https://auth.r0uge.org",
 )
-if "acc_k" in data["keys"] and "acc_s" in data["keys"]:
-    auth.set_access_token(data["keys"]["acc_k"], data["keys"]["acc_s"])
+if "access_token" in data["keys"] and "access_secret" in data["keys"]:
+    auth.set_access_token(
+        data["keys"]["acc_token"], data["keys"]["access_secret"]
+    )
 else:
     # if an access token hasn't been generated yet, go through the process of getting one
     try:
@@ -44,8 +48,8 @@ else:
     except tweepy.TweepError:
         print("Failed to get access token, exitting OWO")
         exit()
-    data["keys"]["acc_k"] = auth.access_token
-    data["keys"]["acc_s"] = auth.access_token_secret
+    data["keys"]["access_token"] = auth.access_token
+    data["keys"]["access_secret"] = auth.access_token_secret
 api = tweepy.API(auth)
 
 start = api.get_user(id=data["uid"]).created_at
