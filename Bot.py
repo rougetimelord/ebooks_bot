@@ -8,7 +8,7 @@ from urllib.error import URLError as URL_Error
 import urllib.request as request
 from datetime import datetime as date
 
-VERSION = "1.1.5"
+VERSION = "1.1.6"
 
 
 def uni_norm(text):

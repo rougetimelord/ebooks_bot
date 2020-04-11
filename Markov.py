@@ -117,7 +117,10 @@ class Chain:
             if length > 1:
                 res += " "
 
-        return res
+        if len(res) > 280:
+            return self.generate_sentence(length)
+        else:
+            return res
 
 
 if __name__ == "__main__":
