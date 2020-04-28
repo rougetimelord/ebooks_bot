@@ -118,7 +118,7 @@ class Chain:
                 res += " "
 
         if len(res) > 280:
-            return self.generate_sentence(length)
+            return self.generate_text(length)
         else:
             return res
 
