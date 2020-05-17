@@ -8,7 +8,7 @@ from urllib.error import URLError as URL_Error
 import urllib.request as request
 from datetime import datetime as date
 
-VERSION = "1.1.6"
+VERSION = "1.2.0"
 
 
 def uni_norm(text):
@@ -175,16 +175,15 @@ class Bot:
                 return
             all_tweets.extend(next_tweets)
 
-            min_id = self.data["last_id"]
-            self.data["last_id"] = all_tweets[0].id
-            max_id = self.data["last_id"] - 1
+            max_id = next_tweets[-1].id - 1
+            self.data["last_id"] = next_tweets[0].id
+
             while len(next_tweets) > 0:
                 next_tweets = self.api.user_timeline(
                     screen_name=self.data["base"],
                     count=200,
                     include_rts="false",
                     max_id=max_id,
-                    since_id=min_id,
                     tweet_mode="extended",
                 )
                 all_tweets.extend(next_tweets)
@@ -302,19 +301,10 @@ class Bot:
             self.sleep_wrapper()
         return
 
-    def start_stream(self, wait=0):
-        """Starts the stream listener
-        
-        Keyword Arguments:
-            wait {int} -- How long to wait before starting. (default: {0})
-        """
-
-        time.sleep(wait)
-        # set up an event listener for base account tweets
-        self.listener = Stream.listener(self)
-        self.stream = tweepy.Stream(self.api.auth, self.listener)
-        self.stream.filter(follow=[str(self.data["uid"])], is_async=True)
-        return
+    def get_wrapper(self):
+        while True:
+            time.sleep(1.8e3)
+            self.get_tweets()
 
     def start(self):
         """Really starts up the bot.
@@ -327,7 +317,6 @@ class Bot:
                 % round(self.wait / 60, 2)
             )
         self.get_tweets()
-        self.start_stream()
         # create threads for posting and mentions
         self.post_thread = threading.Thread(
             target=self.post_wrapper, name="Post_Thread"
@@ -335,8 +324,12 @@ class Bot:
         self.mention_thread = threading.Thread(
             target=self.mentions_wrapper, name="Mention_Thread"
         )
+        self.get_thread = threading.Thread(
+            target=self.get_wrapper, name="Get_Thread"
+        )
         self.post_thread.start()
         self.mention_thread.start()
+        self.get_thread.start()
         return
 
 
