@@ -98,17 +98,17 @@ for day in range(math.ceil(days / 60)):
     sleep(delay)
     try:
         found_tweets = driver.find_elements_by_css_selector(tweet_selector)
-        all_tweets = found_tweets[:]
+        found_num = len(found_tweets)
         increment = 0
         # Get all of the ids out of the links
-        for tweet in all_tweets:
+        for tweet in found_tweets:
             try:
                 id = tweet.get_attribute("href").split("/")[-1]
                 ids.append(id)
             except StaleElementReferenceException as e:
                 print("lost element reference", tweet)
 
-        while len(found_tweets) >= increment:
+        while found_num >= 5 and found_num >= increment:
             # Scroll down
             driver.execute_script(
                 "window.scrollTo(0, document.body.scrollHeight);"
@@ -116,15 +116,15 @@ for day in range(math.ceil(days / 60)):
             sleep(delay)
 
             found_tweets = driver.find_elements_by_css_selector(tweet_selector)
-            all_tweets = found_tweets[:]
-            for tweet in all_tweets:
+            found_num = len(found_tweets)
+            for tweet in found_tweets:
                 try:
                     id = tweet.get_attribute("href").split("/")[-1]
                     ids.append(id)
                 except StaleElementReferenceException as e:
                     print("lost element reference", tweet)
             print("{} total ids".format(len(ids)))
-            increment += 4
+            increment += 10
             sleep(delay)
 
     except NoSuchElementException:
