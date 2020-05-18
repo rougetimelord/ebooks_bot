@@ -13,7 +13,7 @@ from selenium.webdriver.common.keys import Keys
 import Markov
 
 # Configurable options
-delay = 2  # time to wait on each page load before reading the page
+delay = 3  # time to wait on each page load before reading the page
 driver = webdriver.Chrome()  # options are Chrome() Firefox() Safari()
 
 try:
@@ -124,7 +124,7 @@ for day in range(math.ceil(days / 60)):
                 except StaleElementReferenceException as e:
                     print("lost element reference", tweet)
             print("{} total ids".format(len(ids)))
-            increment += 5
+            increment += 4
             sleep(delay)
 
     except NoSuchElementException:
