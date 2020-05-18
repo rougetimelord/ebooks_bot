@@ -56,7 +56,9 @@ start = api.get_user(id=data["uid"]).created_at
 end = datetime.datetime.now()
 
 days = (end - start).days + 1
-tweet_selector = "article > div > div > :nth-child(2) > :nth-child(2) > :nth-child(1) > div > div > :nth-child(1) > a"
+tweet_selector = (
+    "article > div > div > div > div > div > div > div.r-1d09ksm > a"
+)
 user = data["base"].lower()
 ids = []
 
@@ -122,7 +124,7 @@ for day in range(math.ceil(days / 60)):
                 except StaleElementReferenceException as e:
                     print("lost element reference", tweet)
             print("{} total ids".format(len(ids)))
-            increment += 10
+            increment += 5
             sleep(delay)
 
     except NoSuchElementException:
@@ -174,18 +176,19 @@ def add_tweets(tweets):
     # add tweets from the base account to the markov chain
     for tweet in tweets:
         text = "\x02"
-        if tweet.truncated:
-            text += uni_norm(tweet.extended_tweet["full_text"])
-        elif hasattr(tweet, "full_text"):
-            text += uni_norm(tweet.full_text)
-        else:
-            text += uni_norm(tweet.text)
-        for pat in ignore:
-            text = re.sub(pat, "", text)
-        text = re.sub(r"\n{2,}", "\n", text)
-        if not len(text) <= 1:
-            text += "\x03"
-            chain.add_text(text)
+        if tweet.author.id == data["uid"]:
+            if tweet.truncated:
+                text += uni_norm(tweet.extended_tweet["full_text"])
+            elif hasattr(tweet, "full_text"):
+                text += uni_norm(tweet.full_text)
+            else:
+                text += uni_norm(tweet.text)
+            for pat in ignore:
+                text = re.sub(pat, "", text)
+            text = re.sub(r"\n{2,}", "\n", text)
+            if not len(text) <= 1:
+                text += "\x03"
+                chain.add_text(text)
 
 
 for ids_part in list(chunks(final_ids, 100)):
