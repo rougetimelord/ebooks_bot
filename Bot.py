@@ -1,6 +1,6 @@
 # bot.py, a manager of interactions with the twitter api
 # Copyright (C) 2018 Blair "rouge" LaCriox
-import Markov, Stream
+import Markov
 import tweepy
 import json, re, time, threading
 from html import unescape
