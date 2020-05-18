@@ -13,7 +13,7 @@ from selenium.webdriver.common.keys import Keys
 import Markov
 
 # Configurable options
-delay = 3  # time to wait on each page load before reading the page
+delay = 10  # time to wait on each page load before reading the page
 driver = webdriver.Chrome()  # options are Chrome() Firefox() Safari()
 
 try:
@@ -89,13 +89,14 @@ def increment_day(date, i):
     return date + datetime.timedelta(days=i)
 
 
+day_increment = 70
 # Search every two month period
-for day in range(math.ceil(days / 60)):
+for day in range(math.ceil(days / day_increment)):
     d1 = format_day(increment_day(start, 0))
     d2 = format_day(increment_day(start, 60))
     url = form_url(d1, d2)
     driver.get(url)
-    sleep(delay)
+    sleep(5)
     try:
         found_tweets = driver.find_elements_by_css_selector(tweet_selector)
         found_num = len(found_tweets)
@@ -129,7 +130,7 @@ for day in range(math.ceil(days / 60)):
 
     except NoSuchElementException:
         print("no tweets on this day")
-    start = increment_day(start, 70)
+    start = increment_day(start, day_increment)
 
 print("done getting tweet ids")
 driver.close()
