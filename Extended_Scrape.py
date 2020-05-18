@@ -129,7 +129,7 @@ for day in range(math.ceil(days / 60)):
 
     except NoSuchElementException:
         print("no tweets on this day")
-    start = increment_day(start, 60)
+    start = increment_day(start, 70)
 
 print("done getting tweet ids")
 driver.close()
