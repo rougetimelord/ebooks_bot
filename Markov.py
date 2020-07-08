@@ -32,7 +32,7 @@ class Chain:
                 print("%s, exiting" % e)
                 exit()
 
-    def add_sentence(self, text, end):
+    def add_sentence(self, text):
         """Adds a single sentence to the chain
         
         Arguments:
@@ -41,7 +41,7 @@ class Chain:
         """
 
         array = text.split()
-        array.append(end)
+        array.append("\x03")
         if array[0] == "\x03":
             return
         self.data["freq"]["\x02"].append(array[0])
@@ -67,8 +67,7 @@ class Chain:
         while len(pieces) > 1:
             content = pieces[0]
             if len(content) != 0 and content[0] != " ":
-                end = pieces[1]
-                self.add_sentence(content, end)
+                self.add_sentence(content)
             pieces = pieces[2:]
         self.dump()
 
@@ -81,7 +80,7 @@ class Chain:
 
         res = ""
         seps = "\x03"
-        special = ",.?!"
+        special = ",.?!:;"
         word = random.choice(self.data["freq"]["\x02"])
         res += word
         run = True
