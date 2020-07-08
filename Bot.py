@@ -8,7 +8,7 @@ from urllib.error import URLError as URL_Error
 import urllib.request as request
 from datetime import datetime as date
 
-VERSION = "1.2.0"
+VERSION = "1.2.1"
 
 
 def uni_norm(text):
@@ -64,6 +64,7 @@ class Bot:
             r"^ ",
             r'"',
         ]
+        self.special = ",.?!:;"
 
     def dump(self, silent=False):
         """Dumps json data to file, thread safely.
@@ -145,6 +146,8 @@ class Bot:
                     text += uni_norm(tweet.full_text)
                 else:
                     text += uni_norm(tweet.text)
+                for c in self.special:
+                    text = text.replace(c, " %s " % c)
                 for pat in self.ignore:
                     text = re.sub(pat, "", text)
                 text = re.sub(r"\n{2,}", "\n", text)
@@ -165,7 +168,7 @@ class Bot:
         all_tweets = []
         try:
             next_tweets = self.api.user_timeline(
-                screen_name=self.data["base"],
+                id=self.data["uid"],
                 count=200,
                 include_rts="false",
                 since_id=self.data["last_id"],
@@ -175,19 +178,19 @@ class Bot:
                 return
             all_tweets.extend(next_tweets)
 
-            max_id = next_tweets[-1].id - 1
+            new_max = next_tweets[-1].id - 1
             self.data["last_id"] = next_tweets[0].id
 
             while len(next_tweets) > 0:
                 next_tweets = self.api.user_timeline(
-                    screen_name=self.data["base"],
+                    id=self.data["uid"],
                     count=200,
                     include_rts="false",
-                    max_id=max_id,
+                    max_id=new_max,
                     tweet_mode="extended",
                 )
                 all_tweets.extend(next_tweets)
-                max_id = all_tweets[-1].id - 1
+                new_max = all_tweets[-1].id - 1
             self.dump(silent=True)
             self.add_tweets(all_tweets)
         except tweepy.TweepError as e:
