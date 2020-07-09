@@ -8,7 +8,7 @@ from urllib.error import URLError as URL_Error
 import urllib.request as request
 from datetime import datetime as date
 
-VERSION = "1.2.1"
+VERSION = "1.3.1"
 
 
 def uni_norm(text):
@@ -60,10 +60,10 @@ class Bot:
             r" ?(https?|www)[A-Za-z0-9:\/\.\-_?=%@~\+]*",
             r" ?\$[A-Za-z]{1,6}(?![A-Za-z])",
             r'(?<=\s)"\s',
-            r"(?<= ) {1,}",
             r"^ ",
             r'"',
         ]
+        self.space_filter = (r"(?<= ) {1,}",)
         self.special = ",.?!:;"
 
     def dump(self, silent=False):
@@ -149,10 +149,11 @@ class Bot:
                     text += uni_norm(tweet.full_text)
                 else:
                     text += uni_norm(tweet.text)
-                for c in self.special:
-                    text = text.replace(c, " %s " % c)
                 for pat in self.ignore:
                     text = re.sub(pat, "", text)
+                for c in self.special:
+                    text = text.replace(c, " %s " % c)
+                text = re.sub(self.space_filter, "", text)
                 text = re.sub(r"\n{2,}", "\n", text)
                 if not len(text) <= 1:
                     text += "\x03"
