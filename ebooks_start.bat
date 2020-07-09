@@ -1,3 +1,3 @@
-cd C:\Users\snfal\Downloads\ebooks_bot-master
+cd #CHANGE
 echo ebooks bot starting
 py ./Bot.py
