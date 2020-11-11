@@ -1,5 +1,5 @@
 # markov.py, a markov chain manager
-# Copyright (C) 2018 Blair "rouge" LaCriox
+# Copyright (C) 2020 _r0uge
 import random, re, json
 
 
